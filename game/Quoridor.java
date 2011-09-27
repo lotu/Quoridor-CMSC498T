@@ -22,6 +22,9 @@ public class Quoridor {
 		}
 		
 		while(current_turn < MAX_TURNS && !(b.is_game_over())){
+			// Print turn info here so debuging in player is printed after
+			System.out.println("Turn " + (current_turn +1 )+ ":");
+			System.out.println("Player " + (player_turn_idx +1 )+ " move:");
 			Move move_made = players.get(player_turn_idx).make_move(new Board(b));
 			// if the move is invalid
 			if(!b.apply_move(move_made)){
@@ -35,7 +38,9 @@ public class Quoridor {
 				}
 			}
 			
-			System.out.println("Player " + (player_turn_idx +1 )+ " moved:\n" + b);
+			System.out.println(move_made);
+			System.out.println(b);
+			System.out.println("");
 			
 			current_turn++;
 			player_turn_idx = (player_turn_idx + 1) % 4; 
