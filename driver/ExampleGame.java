@@ -8,6 +8,7 @@ import java.util.Random;
 import players.Player;
 import players.Player_ID;
 import players.Random_Player;
+import players.OneAhead_Player;
 
 /**
  * Set up and run a simple Quoridor game with 4 randomly moving agents.
@@ -31,7 +32,10 @@ public class ExampleGame {
 		Random rng = new Random( seed );
 		
 		for(int i = 0; i < 4; i++){
-			players.add(new Random_Player());
+			//players.add(new Random_Player());
+			players.add(new OneAhead_Player());
+		}
+		for(int i = 0; i < 4; i++){
 			players.get(i).set_seed( rng.nextLong() );
 		}
 		
