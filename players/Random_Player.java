@@ -21,6 +21,7 @@ public class Random_Player implements Player {
 	 * returns a random move choice
 	 */
 	public Move make_move(Board b) {
+		System.out.println("Player " + (self_id.ordinal() +1) + " Board:\n" + b);
 		Vector<Move> possible_moves = b.get_possible_moves(self_id);
 		return possible_moves.get(rng.nextInt(possible_moves.size()));
 	}
