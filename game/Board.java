@@ -22,7 +22,8 @@ public class Board {
 	private Coordinate_Pair<Integer, Integer> p2_location;
 	private Coordinate_Pair<Integer, Integer> p3_location;
 	private Coordinate_Pair<Integer, Integer> p4_location;
-	private HashMap<Coordinate_Pair<Integer, Integer>, Boolean> wall_placement_locations;
+	private HashMap<Coordinate_Pair<Integer, Integer>, Boolean> horizontal_wall_placement_locations;
+	private HashMap<Coordinate_Pair<Integer, Integer>, Boolean> vertical_wall_placement_locations;
 	private int[] walls;
 	
 	/**
@@ -49,7 +50,8 @@ public class Board {
 		board.get_cell(BOARD_SIZE/2, 0).set_data(Cell_Status.P4);
 		p4_location = new Coordinate_Pair<Integer, Integer>(BOARD_SIZE/2, 0);
 		
-		wall_placement_locations = new HashMap<Coordinate_Pair<Integer,Integer>, Boolean>();
+		horizontal_wall_placement_locations = new HashMap<Coordinate_Pair<Integer,Integer>, Boolean>();
+		vertical_wall_placement_locations = new HashMap<Coordinate_Pair<Integer,Integer>, Boolean>();
 	}
 	
 	/**
@@ -78,9 +80,28 @@ public class Board {
 		board.get_cell(b.p4_location.get_y_coordinate(), b.p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
 		p4_location = new Coordinate_Pair<Integer, Integer>(b.p4_location.get_y_coordinate(), b.p4_location.get_x_coordinate());
 	
-		wall_placement_locations = new HashMap<Coordinate_Pair<Integer,Integer>, Boolean>();
-		for(Coordinate_Pair<Integer, Integer> key : b.wall_placement_locations.keySet()){
-			place_wall(key.get_y_coordinate(), key.get_x_coordinate(), b.wall_placement_locations.get(key));
+		horizontal_wall_placement_locations = new HashMap<Coordinate_Pair<Integer,Integer>, Boolean>();
+		vertical_wall_placement_locations = new HashMap<Coordinate_Pair<Integer,Integer>, Boolean>();
+		for(Coordinate_Pair<Integer, Integer> key : b.horizontal_wall_placement_locations.keySet()){
+			int row = key.get_y_coordinate();
+			int col = key.get_x_coordinate();
+			board.get_cell(row, col).get_neighbors().remove(board.get_cell(row-1, col));
+			board.get_cell(row-1, col).get_neighbors().remove(board.get_cell(row, col));
+			board.get_cell(row, col+1).get_neighbors().remove(board.get_cell(row-1, col+1));
+			board.get_cell(row-1, col+1).get_neighbors().remove(board.get_cell(row, col+1));
+
+			horizontal_wall_placement_locations.put(new Coordinate_Pair<Integer, Integer>(row, col), true);
+		}
+		for(Coordinate_Pair<Integer, Integer> key : b.vertical_wall_placement_locations.keySet()){
+			int row = key.get_y_coordinate();
+			int col = key.get_x_coordinate();
+	
+			board.get_cell(row, col).get_neighbors().remove(board.get_cell(row, col-1));
+			board.get_cell(row, col-1).get_neighbors().remove(board.get_cell(row, col));
+			board.get_cell(row+1, col).get_neighbors().remove(board.get_cell(row+1, col-1));
+			board.get_cell(row+1, col-1).get_neighbors().remove(board.get_cell(row+1, col));
+
+			vertical_wall_placement_locations.put(new Coordinate_Pair<Integer, Integer>(row, col), true);
 		}
 	}
 	
@@ -134,7 +155,7 @@ public class Board {
 			}
 		}
 		//jump left
-		else if(to_row == from_row && to_col == from_col-1){
+		else if(to_row == from_row && to_col == from_col-2){
 			//player must be directly below
 			if(!(board.get_cell(from_row, from_col - 1).get_data() == Cell_Status.FREE)){
 				//and a wall must not be blocking the jump
@@ -144,7 +165,7 @@ public class Board {
 			}
 		}
 		//jump right
-		else if(to_row == from_row && to_col == from_col+1){
+		else if(to_row == from_row && to_col == from_col+2){
 			//player must be directly below
 			if(!(board.get_cell(from_row, from_col + 1).get_data() == Cell_Status.FREE)){
 				//and a wall must not be blocking the jump
@@ -504,26 +525,27 @@ public class Board {
 		
 		//will the wall intersect another wall
 		if(place_horizontally){
-			if(wall_placement_locations.get(new Coordinate_Pair<Integer, Integer>(row - 1, col+1)) != null){
+			if(vertical_wall_placement_locations.get(new Coordinate_Pair<Integer, Integer>(row - 1, col+1)) != null){
 				//check for a vertical intersecting wall
-				if(wall_placement_locations.get(new Coordinate_Pair<Integer, Integer>(row - 1, col+1)) == false){
-					return false;
-				}
+				return false;
 			}
 		}
 		else{
-			if(wall_placement_locations.get(new Coordinate_Pair<Integer, Integer>(row + 1, col-1)) != null){
+			if(horizontal_wall_placement_locations.get(new Coordinate_Pair<Integer, Integer>(row + 1, col-1)) != null){
 				//check for a horizontal intersecting wall
-				if(wall_placement_locations.get(new Coordinate_Pair<Integer, Integer>(row + 1, col-1)) == true){
-					return false;
-				}
+				return false;
 			}
 		}
 		
 		//walls must be within 1 space of another wall or 2 spaces of a pawn
 		boolean is_wall_too_far_from_walls = true;
-		for(Coordinate_Pair<Integer, Integer> wall : wall_placement_locations.keySet()){
-			if(distance_between_walls(row, col, place_horizontally, wall.get_y_coordinate(), wall.get_x_coordinate(), wall_placement_locations.get(wall)) <= 1){
+		for(Coordinate_Pair<Integer, Integer> wall : horizontal_wall_placement_locations.keySet()){
+			if(distance_between_walls(row, col, place_horizontally, wall.get_y_coordinate(), wall.get_x_coordinate(), true) <= 1){
+				is_wall_too_far_from_walls = false;
+			}
+		}
+		for(Coordinate_Pair<Integer, Integer> wall : vertical_wall_placement_locations.keySet()){
+			if(distance_between_walls(row, col, place_horizontally, wall.get_y_coordinate(), wall.get_x_coordinate(), false) <= 1){
 				is_wall_too_far_from_walls = false;
 			}
 		}
@@ -691,14 +713,16 @@ public class Board {
 				board.get_cell(row-1, col).get_neighbors().remove(board.get_cell(row, col));
 				board.get_cell(row, col+1).get_neighbors().remove(board.get_cell(row-1, col+1));
 				board.get_cell(row-1, col+1).get_neighbors().remove(board.get_cell(row, col+1));
+				horizontal_wall_placement_locations.put(new Coordinate_Pair<Integer, Integer>(row, col), true);
 			}
 			else{
 				board.get_cell(row, col).get_neighbors().remove(board.get_cell(row, col-1));
 				board.get_cell(row, col-1).get_neighbors().remove(board.get_cell(row, col));
 				board.get_cell(row+1, col).get_neighbors().remove(board.get_cell(row+1, col-1));
 				board.get_cell(row+1, col-1).get_neighbors().remove(board.get_cell(row+1, col));
+				vertical_wall_placement_locations.put(new Coordinate_Pair<Integer, Integer>(row, col), true);
 			}
-			wall_placement_locations.put(new Coordinate_Pair<Integer, Integer>(row, col), place_horizontally);
+			
 			return true; //the wall could was successfully placed in the desired location
 		}
 		
@@ -945,6 +969,23 @@ public class Board {
 		if(can_move_to(player_row_location, player_col_location, player_row_location+1, player_col_location-1)){
 			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location+1, player_col_location-1)));
 		}
+		//jumping moves
+		//up2
+		if(can_move_to(player_row_location, player_col_location, player_row_location-2, player_col_location)){
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location-2, player_col_location)));
+		}
+		//down2
+		if(can_move_to(player_row_location, player_col_location, player_row_location+2, player_col_location)){
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location+2, player_col_location)));
+		}
+		//left2
+		if(can_move_to(player_row_location, player_col_location, player_row_location, player_col_location-2)){
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location, player_col_location-2)));
+		}
+		//right2
+		if(can_move_to(player_row_location, player_col_location, player_row_location, player_col_location+2)){
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location, player_col_location+2)));
+		}
 		
 		//wall-placing options
 		if(walls_available > 0){
@@ -1039,6 +1080,34 @@ public class Board {
 		return min_idx;
 	}
 	
+	public Coordinate_Pair<Integer, Integer> get_player_location(Player_ID p){
+		switch(p){
+			case PLAYER_1:
+				return p1_location;
+			case PLAYER_2:
+				return p2_location;
+			case PLAYER_3:
+				return p3_location;
+			case PLAYER_4:
+				return p4_location;
+		}
+		return null; //satisfies compiler, should not be reached
+	}
+	
+	public int get_wall_count(Player_ID p){
+		switch(p){
+			case PLAYER_1:
+				return walls[0];
+			case PLAYER_2:
+				return walls[1];
+			case PLAYER_3:
+				return walls[2];
+			case PLAYER_4:
+				return walls[3];
+		}
+		return 0;
+	}
+	
 	/**
 	 * Accessor for the underlying grid structure.
 	 * 
@@ -1058,26 +1127,68 @@ public class Board {
 		
 		System.out.println("Created the initial board: \n" + b);
 		
-		b.place_wall(1, 0, true);
-		System.out.println("After placing a horizontal wall: \n" + b);
+		/*
+		 * -------------------
+| | | | | | | | | |
+---------*-*---*-*-
+| | | * * | | * | |
+-------------------
+| | | * * * * * | |
+-*-*-*-*-----------
+|3|4| | | *1* | | |
+-*-*-----*-*-------
+| | | | | | * | | |
+-----*-*-----------
+| | * * * | * |2| |
+-*-*---------*-*---
+| | * * * * | | | |
+-----*-*-----------
+| | | | | * | | | |
+-------------------
+| | | | | | | | | |
+-------------------
+		 */
+				
+		b.board.get_cell(b.p3_location.get_y_coordinate(), b.p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		b.p3_location = new Coordinate_Pair<Integer, Integer>(3, 0);
+		b.board.get_cell(3, 0).set_data(Cell_Status.P3);
 		
-		b.place_wall(4, 3, false);
-		System.out.println("After placing a vertical wall: \n" + b);
+		b.board.get_cell(b.p4_location.get_y_coordinate(), b.p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		b.p4_location = new Coordinate_Pair<Integer, Integer>(3, 1);
+		b.board.get_cell(3, 1).set_data(Cell_Status.P4);
 		
-		b.place_wall(5, 2, true);
-		System.out.println("After placing a horizontal that intersects the last: \n" + b);
+		b.place_wall(3, 0, true);
+		b.place_wall(3, 2, true);
+		System.out.println(b.can_move_to(3, 0, 3, 2));
+
+		b.place_wall(4, 0, true);
+		System.out.println("After placing a walls: \n" + b);
 		
-		b.place_wall(0, 0, false);
-		System.out.println("After placing an invalid wall: \n" + b);
+//		b.place_wall(7, 3, true);
+//		System.out.println("After placing a horizontal wall: \n" + b);
+//		
+//		b.place_wall(6, 3, false);
+//		System.out.println("After placing a vertical wall: \n" + b);
+//		
+//		b.place_wall(4, 2, false);
+//		System.out.println("After placing a vertical wall: \n" + b);
+//		
+//		b.place_wall(5, 2, true);
+//		System.out.println("After placing a horizontal that intersects the last: \n" + b);
+//		
+//		b.place_wall(0, 0, false);
+//		System.out.println("After placing an invalid wall: \n" + b);
+//		
+//		b.move(0, 4, 0, 5, Player_ID.PLAYER_1);
+//		System.out.println("After moving P1 to the right: \n" + b);
+//	
+//		b.move(4, 0, 4, 1, Player_ID.PLAYER_4);
+//		System.out.println("After moving P3 to the right: \n" + b);
+//		
+//		b.move(4, 0, 4, 1, Player_ID.PLAYER_4);
+//		System.out.println("After trying to move P3 through a wall: \n" + b);
 		
-		b.move(0, 4, 0, 5, Player_ID.PLAYER_1);
-		System.out.println("After moving P1 to the right: \n" + b);
-	
-		b.move(4, 0, 4, 1, Player_ID.PLAYER_3);
-		System.out.println("After moving P3 to the right: \n" + b);
-		
-		b.move(4, 0, 4, 1, Player_ID.PLAYER_3);
-		System.out.println("After trying to move P3 through a wall: \n" + b);
+//		System.out.println("Making a copy of the board: \n" + new Board(b));
 	}
 	
 }
