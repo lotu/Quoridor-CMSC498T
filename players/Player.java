@@ -29,4 +29,12 @@ public interface Player {
 	 * @param id
 	 */
 	public void set_id(Player_ID id);
+
+	/**
+	 * Provide a seed to the player to allow random agents to run repeatablly.
+	 * 
+	 * @param seed
+	 */
+	public void set_seed(long seed);
+
 }

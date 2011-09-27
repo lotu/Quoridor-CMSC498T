@@ -39,4 +39,11 @@ public class Random_Player implements Player {
 	public void set_id(Player_ID id){
 		self_id = id;
 	}
+
+	/**
+	 * sets the random seed
+	 */
+	public void set_seed(long seed){
+		rng.setSeed(seed);
+	}
 }
