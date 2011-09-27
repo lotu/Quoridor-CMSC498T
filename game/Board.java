@@ -84,6 +84,16 @@ public class Board {
 	}
 	
 	/**
+	 * Returns the location of the player specified by the argument.
+	 * @parm pid
+	 * @return
+	 */
+	public Coordinate_Pair<Integer, Integer> get_player_location(Player_ID pid)
+	{
+		return player_location[pid.ordinal()];
+	}
+
+	/**
 	 * Assumes there is a pawn on the source location. Can that pawn move from its location 
 	 * to the destination location in one move.
 	 *  
