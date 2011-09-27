@@ -9,9 +9,11 @@ import players.Player;
 import players.Player_ID;
 import players.Random_Player;
 import players.OneAhead_Player;
+import players.Wall_Follow_Player;
 
 /**
- * Set up and run a simple Quoridor game with 4 randomly moving agents.
+ * Set up and run a simple Quoridor game with 2 randomly moving agents and
+ * two wall following agents.
  */
 public class ExampleGame {
 	public static void main(String[] args){
@@ -31,9 +33,10 @@ public class ExampleGame {
 		Vector<Player> players = new Vector<Player>();
 		Random rng = new Random( seed );
 		
-		for(int i = 0; i < 4; i++){
-			//players.add(new Random_Player());
-			players.add(new OneAhead_Player());
+		for(int i = 0; i < 2; i++){
+			players.add(new Random_Player());
+			//players.add(new OneAhead_Player());
+			players.add(new Wall_Follow_Player());
 		}
 		for(int i = 0; i < 4; i++){
 			players.get(i).set_seed( rng.nextLong() );
