@@ -115,4 +115,36 @@ public class Move {
 		return is_horizontal;
 	}
 	
+	public String toString(){
+		StringBuffer buf = new StringBuffer();
+		buf.append("MOVE: ");
+		
+		if(move_type == MOVE_TYPE.PLACE_WALL){
+			buf.append("place ");
+			if(is_horizontal){
+				buf.append("horizontal ");
+			}
+			else{
+				buf.append("vertical ");
+			}
+			
+			buf.append("wall at [");
+			buf.append(target_cell_coordinates.get_y_coordinate());
+			buf.append(", ");
+			buf.append(target_cell_coordinates.get_x_coordinate());
+			buf.append("]");
+		}
+		else{
+			buf.append("move pawn to ");
+			
+			buf.append("[");
+			buf.append(target_cell_coordinates.get_y_coordinate());
+			buf.append(", ");
+			buf.append(target_cell_coordinates.get_x_coordinate());
+			buf.append("]");
+		}
+		
+		return buf.toString();
+	}
+	
 }

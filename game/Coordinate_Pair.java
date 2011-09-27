@@ -28,7 +28,7 @@ public class Coordinate_Pair <T,S>{
         int hashFirst = y != null ? y.hashCode() : 0;
         int hashSecond = x != null ? x.hashCode() : 0;
 
-        return (hashFirst + hashSecond) * hashSecond + hashFirst;
+        return (hashFirst) + (31 * hashSecond);
     }
 	
 	@SuppressWarnings("unchecked")
