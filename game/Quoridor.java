@@ -22,7 +22,7 @@ public class Quoridor {
 		}
 		
 		while(current_turn < MAX_TURNS && !(b.is_game_over())){
-			// Print turn info here so debuging in player is printed after
+			// Print turn info here so debugging in player is printed after
 			System.out.println("Turn " + (current_turn +1 )+ ":");
 			System.out.println("Player " + (player_turn_idx +1 )+ " move:");
 			Move move_made = players.get(player_turn_idx).make_move(new Board(b));
@@ -38,16 +38,22 @@ public class Quoridor {
 				}
 			}
 			
+			// Print board and other usefull information
 			System.out.println(move_made);
 			System.out.println(b);
-			System.out.println("Distance to win:");
+			System.out.println("          Current   Walls  Distance");
+			System.out.println("          Location  Left    to Win");
 			for(int i = 0; i < players.size(); i++){
-				System.out.println("Player " + (i + 1) + ": " + b.shortest_path(players_ids[i] ) );
+				System.out.println("Player " + (i + 1) + ":  (" +
+					b.get_player_location(players_ids[i]).get_x_coordinate() + "," +
+					b.get_player_location(players_ids[i]).get_y_coordinate() + ")      " +
+					b.get_wall_count(players_ids[i]) + "       " +
+					b.shortest_path(players_ids[i] ) );
 			}
 			System.out.println("");
 			
 			current_turn++;
-			player_turn_idx = (player_turn_idx + 1) % 4; 
+			player_turn_idx = (player_turn_idx + 1) % 4;
 		}
 		
 		return b.compute_winner();
