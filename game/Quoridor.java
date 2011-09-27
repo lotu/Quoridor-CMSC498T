@@ -40,6 +40,10 @@ public class Quoridor {
 			
 			System.out.println(move_made);
 			System.out.println(b);
+			System.out.println("Distance to win:");
+			for(int i = 0; i < players.size(); i++){
+				System.out.println("Player " + (i + 1) + ": " + b.shortest_path(players_ids[i] ) );
+			}
 			System.out.println("");
 			
 			current_turn++;
