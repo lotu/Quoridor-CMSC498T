@@ -23,7 +23,11 @@ public class Quoridor {
 		
 		while(current_turn < MAX_TURNS && !(b.is_game_over())){
 			Move move_made = players.get(player_turn_idx).make_move(new Board(b));
-			b.apply_move(move_made);
+			// if the move is invalid
+			if (!b.apply_move(move_made) )
+			{
+				System.out.println("Player " + (player_turn_idx +1 )+ " INVALID MOVE:");
+			}
 			
 			for(int i = 0; i < players.size(); i++){
 				if(i != player_turn_idx){
@@ -31,7 +35,7 @@ public class Quoridor {
 				}
 			}
 			
-			System.out.println("Player " + player_turn_idx + " moved:\n" + b);
+			System.out.println("Player " + (player_turn_idx +1 )+ " moved:\n" + b);
 			
 			current_turn++;
 			player_turn_idx = (player_turn_idx + 1) % 4; 
