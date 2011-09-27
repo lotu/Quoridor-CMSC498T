@@ -1,0 +1,16 @@
+Quoridor Project 
+CMSC 498T 
+
+Class Page:
+http://www.cs.umd.edu/class/fall2011/cmsc498t/
+Original Source Code:
+http://www.cs.umd.edu/~nau/cmsc498t/slides/P1-CMSC498T.zip
+
+Build:
+From base directory run 
+
+$ javac driver/ExampleGame.java 
+
+Run:
+
+$ java driver/ExampleGame
