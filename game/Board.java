@@ -95,7 +95,9 @@ public class Board {
 
 	/**
 	 * Assumes there is a pawn on the source location. Can that pawn move from its location 
-	 * to the destination location in one move.
+	 * to the destination location in one move.  
+     * XXX: Note this function ignores the walls, for the direct moves.  This appears to be 
+	 * bug, that needs to be fixed, and it breaks many other things.
 	 *  
 	 * @param from_row
 	 * @param from_col
