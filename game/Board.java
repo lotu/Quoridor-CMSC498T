@@ -139,7 +139,7 @@ public class Board {
 			//player must be directly above
 			if(!(board.get_cell(from_row - 1, from_col).get_data() == Cell_Status.FREE)){
 				//and a wall must not be blocking the jump
-				if(can_move_to(from_row-1, from_col, from_row-2, from_col)){
+				if(board.are_cells_neighbors(from_row, from_col, from_row-1, from_col) && can_move_to(from_row-1, from_col, from_row-2, from_col)){
 					return true;
 				}
 			}
@@ -149,7 +149,7 @@ public class Board {
 			//player must be directly below
 			if(!(board.get_cell(from_row + 1, from_col).get_data() == Cell_Status.FREE)){
 				//and a wall must not be blocking the jump
-				if(can_move_to(from_row+1, from_col, from_row+2, from_col)){
+				if(board.are_cells_neighbors(from_row, from_col, from_row+1, from_col) && can_move_to(from_row+1, from_col, from_row+2, from_col)){
 					return true;
 				}
 			}
@@ -159,7 +159,7 @@ public class Board {
 			//player must be directly below
 			if(!(board.get_cell(from_row, from_col - 1).get_data() == Cell_Status.FREE)){
 				//and a wall must not be blocking the jump
-				if(can_move_to(from_row, from_col-1, from_row, from_col-2)){
+				if(board.are_cells_neighbors(from_row, from_col, from_row, from_col-1) && can_move_to(from_row, from_col-1, from_row, from_col-2)){
 					return true;
 				}
 			}
@@ -169,7 +169,7 @@ public class Board {
 			//player must be directly below
 			if(!(board.get_cell(from_row, from_col + 1).get_data() == Cell_Status.FREE)){
 				//and a wall must not be blocking the jump
-				if(can_move_to(from_row, from_col+1, from_row, from_col+2)){
+				if(board.are_cells_neighbors(from_row, from_col, from_row, from_col+1) && can_move_to(from_row, from_col+1, from_row, from_col+2)){
 					return true;
 				}
 			}
@@ -181,14 +181,14 @@ public class Board {
 			//player must be directly above or left of from location AND
 			//there must not be a wall between jumped pawn and the destination
 			if(!(board.get_cell(from_row - 1, from_col).get_data() == Cell_Status.FREE) && 
-					can_move_to(from_row-1, from_col, to_row, to_col)){
+					can_move_to(from_row-1, from_col, to_row, to_col) && board.are_cells_neighbors(from_row, from_col, from_row-1, from_col)){
 				//and straight jump must not be possible
 				if(!(can_move_to(from_row-1, from_col, from_row-2, from_col))){
 					return true;
 				}
 			}
 			else if(!(board.get_cell(from_row, from_col-1).get_data() == Cell_Status.FREE) &&
-					can_move_to(from_row, from_col-1, to_row, to_col)){
+					can_move_to(from_row, from_col-1, to_row, to_col) && board.are_cells_neighbors(from_row, from_col, from_row, from_col-1)){
 				//and straight jump must not be possible
 				if(!(can_move_to(from_row, from_col-1, from_row, from_col-2))){
 					return true;
@@ -199,14 +199,14 @@ public class Board {
 		else if(to_row == from_row - 1 && to_col == from_col + 1){
 			//player must be directly above or right of from location
 			if(!(board.get_cell(from_row - 1, from_col).get_data() == Cell_Status.FREE) &&
-					can_move_to(from_row-1, from_col, to_row, to_col)){
+					can_move_to(from_row-1, from_col, to_row, to_col) && board.are_cells_neighbors(from_row, from_col, from_row-1, from_col)){
 				//and straight jump must not be possible
 				if(!(can_move_to(from_row-1, from_col, from_row-2, from_col))){
 					return true;
 				}
 			}
 			else if(!(board.get_cell(from_row, from_col+1).get_data() == Cell_Status.FREE) && 
-					can_move_to(from_row, from_col+1, to_row, to_col)){
+					can_move_to(from_row, from_col+1, to_row, to_col) && board.are_cells_neighbors(from_row, from_col, from_row, from_col+1)){
 				//and straight jump must not be possible
 				if(!(can_move_to(from_row, from_col+1, from_row, from_col+2))){
 					return true;
@@ -217,14 +217,14 @@ public class Board {
 		else if(to_row == from_row + 1 && to_col == from_col - 1){
 			//player must be directly below or left of from location
 			if(!(board.get_cell(from_row + 1, from_col).get_data() == Cell_Status.FREE) && 
-					can_move_to(from_row+1, from_col, to_row, to_col)){
+					can_move_to(from_row+1, from_col, to_row, to_col) && board.are_cells_neighbors(from_row, from_col, from_row+1, from_col)){
 				//and straight jump must not be possible
 				if(!(can_move_to(from_row+1, from_col, from_row+2, from_col))){
 					return true;
 				}
 			}
 			else if(!(board.get_cell(from_row, from_col-1).get_data() == Cell_Status.FREE) &&
-					can_move_to(from_row, from_col-1, to_row, to_col)){
+					can_move_to(from_row, from_col-1, to_row, to_col) && board.are_cells_neighbors(from_row, from_col, from_row, from_col-1)){
 				//and straight jump must not be possible
 				if(!(can_move_to(from_row, from_col-1, from_row, from_col-2))){
 					return true;
@@ -235,14 +235,14 @@ public class Board {
 		else if(to_row == from_row + 1 && to_col == from_col + 1){
 			//player must be directly below or right of from location
 			if(!(board.get_cell(from_row + 1, from_col).get_data() == Cell_Status.FREE) && 
-					can_move_to(from_row+1, from_col, to_row, to_col)){
+					can_move_to(from_row+1, from_col, to_row, to_col) && board.are_cells_neighbors(from_row, from_col, from_row+1, from_col)){
 				//and straight jump must not be possible
 				if(!(can_move_to(from_row+1, from_col, from_row+2, from_col))){
 					return true;
 				}
 			}
 			else if(!(board.get_cell(from_row, from_col+1).get_data() == Cell_Status.FREE) && 
-			can_move_to(from_row, from_col+1, to_row, to_col)){
+			can_move_to(from_row, from_col+1, to_row, to_col) && board.are_cells_neighbors(from_row, from_col, from_row, from_col+1)){
 				//and straight jump must not be possible
 				if(!(can_move_to(from_row, from_col+1, from_row, from_col+2))){
 					return true;
@@ -250,9 +250,20 @@ public class Board {
 			}
 		}
 		
-		return false; 
+		return false;
 	}
 	
+	/**
+	 * A pair of accessors for the wall locations maps.
+	 */
+	public HashMap<Coordinate_Pair<Integer, Integer>, Boolean> getHorizontal_wall_placement_locations() {
+		return horizontal_wall_placement_locations;
+	}
+
+	public HashMap<Coordinate_Pair<Integer, Integer>, Boolean> getVertical_wall_placement_locations() {
+		return vertical_wall_placement_locations;
+	}
+
 	/**
 	 * Does a path exist from the provided board location to the specified column.
 	 * 
@@ -262,6 +273,12 @@ public class Board {
 	 * @return
 	 */
 	private boolean path_exists_to_column(int from_row, int from_col, int to_col){
+		//remove pawns from the board temporaily so jumps can be ignored
+		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		
 		Stack<Coordinate_Pair<Integer, Integer>> tovisit_stack = new Stack<Coordinate_Pair<Integer, Integer>>();
 		HashMap<Coordinate_Pair<Integer, Integer>, Boolean> visited_map = new HashMap<Coordinate_Pair<Integer, Integer>, Boolean>();
 		tovisit_stack.push(new Coordinate_Pair<Integer, Integer>(from_row, from_col));
@@ -271,6 +288,11 @@ public class Board {
 			
 			//is this in the target column?
 			if(next.get_x_coordinate() == to_col){
+				//replace pawns
+				board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.P1);
+				board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.P2);
+				board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.P3);
+				board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
 				return true;
 			}
 			
@@ -340,6 +362,11 @@ public class Board {
 			}
 		}
 		
+		//replace player pawns
+		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.P1);
+		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.P2);
+		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.P3);
+		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
 		return false;
 	}
 	
@@ -352,6 +379,12 @@ public class Board {
 	 * @return
 	 */
 	private boolean path_exists_to_row(int from_row, int from_col, int to_row){
+		//remove pawns from the board temporaily so jumps can be ignored
+		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		
 		Stack<Coordinate_Pair<Integer, Integer>> tovisit_stack = new Stack<Coordinate_Pair<Integer, Integer>>();
 		HashMap<Coordinate_Pair<Integer, Integer>, Boolean> visited_map = new HashMap<Coordinate_Pair<Integer, Integer>, Boolean>();
 		tovisit_stack.push(new Coordinate_Pair<Integer, Integer>(from_row, from_col));
@@ -361,6 +394,11 @@ public class Board {
 			
 			//is this in the target column?
 			if(next.get_y_coordinate() == to_row){
+				//replace player pawns
+				board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.P1);
+				board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.P2);
+				board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.P3);
+				board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
 				return true;
 			}
 			
@@ -430,6 +468,12 @@ public class Board {
 			}
 		}
 		
+		//replace player pawns
+		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.P1);
+		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.P2);
+		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.P3);
+		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
+		
 		return false;
 	}
 	
@@ -440,6 +484,13 @@ public class Board {
 	public int shortest_path(Player_ID p){
 		HashMap<Cell<Cell_Status>, Integer> distances = null;
 		Integer min_dist = null;
+		int ret = 0;
+		
+		//remove pawns from the board temporaily so jumps can be ignored
+		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
 		
 		switch(p){
 			// player 1 trying to reach row BOARD_SIZE -1
@@ -451,7 +502,8 @@ public class Board {
 						min_dist = distances.get(board.get_cell(BOARD_SIZE-1, i));
 					}
 				}
-				return min_dist;
+				ret = min_dist;
+				break;
 			// player 2 trying to reach column 0	
 			case PLAYER_2:
 				distances = board.dijkstra(p2_location.get_y_coordinate(), p2_location.get_x_coordinate());
@@ -461,7 +513,8 @@ public class Board {
 						min_dist = distances.get(board.get_cell(i, 0));
 					}
 				}
-				return min_dist;
+				ret = min_dist;
+				break;
 			// player 3 trying to reach row 0
 			case PLAYER_3:
 				distances = board.dijkstra(p3_location.get_y_coordinate(), p3_location.get_x_coordinate());
@@ -471,7 +524,8 @@ public class Board {
 						min_dist = distances.get(board.get_cell(0, i));
 					}
 				}
-				return min_dist;
+				ret = min_dist;
+				break;
 				
 			// player 4 trying to reach column BOARD_SIZE - 1
 			case PLAYER_4:
@@ -482,12 +536,16 @@ public class Board {
 						min_dist = distances.get(board.get_cell(i, BOARD_SIZE - 1));
 					}
 				}
-				return min_dist;
-			default: 
-				System.err.println("Invalid player ID in shortest path calculation.");
-				System.exit(0);
-				return 0; // unreachable but satisfies compile error 
+				ret = min_dist;
+				break;
 		}
+		
+		//replace player pawns
+		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.P1);
+		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.P2);
+		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.P3);
+		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
+		return ret;
 	}
 	
 	/**

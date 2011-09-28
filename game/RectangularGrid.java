@@ -106,6 +106,10 @@ public class RectangularGrid <T> {
 		return distances;
 	}
 	
+	public boolean are_cells_neighbors(int row1, int col1, int row2, int col2){
+		return m_cells[row1][col1].get_neighbors().contains(m_cells[row2][col2]);
+	}
+
 	/**
 	 * Test driver.
 	 * 
