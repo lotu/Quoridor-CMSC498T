@@ -33,23 +33,37 @@ public class MinMax_Player implements Player {
 	 * returns a random move choice
 	 */
 	public Move make_move(Board b) {
+		long start = System.currentTimeMillis();
+
 		Vector<Move> moves = b.get_possible_moves(self_id);
 		Vector<Move> good_moves = new Vector<Move>();
-		int best = LOSS;
-		for ( int i=0 ; i < moves.size(); i++) {
-			int[] eval = eval_move( b, moves.get(i), 1);
-			int myScore = eval[self_id.ordinal()];
-			if ( myScore > best) {
-				best = myScore;
-				good_moves.removeAllElements();
-				good_moves.add(moves.get(i) );
-			} else if( myScore == best ) {
-				good_moves.add(moves.get(i));
+		// Increment to zero at start of loop
+		int depth = -1;
+		// Iterative deepening
+		while ( System.currentTimeMillis() - start < 1000 )
+		{
+			depth += 1;
+			// new list of good moves
+			good_moves.removeAllElements();
+			int best = LOSS;
+			for ( int i=0 ; i < moves.size(); i++) {
+				// eval
+				int[] eval = eval_move( b, moves.get(i), depth);
+				int myScore = eval[self_id.ordinal()];
+				if ( myScore > best) {
+					best = myScore;
+					good_moves.removeAllElements();
+					good_moves.add(moves.get(i) );
+				} else if( myScore == best ) {
+					good_moves.add(moves.get(i));
+				}
 			}
 		}
+		// Print moves
 		for ( int i= 0 ; i < good_moves.size() ; i++) {
 			System.out.println( good_moves.get(i) );
 		}
+		System.out.println("Depth: " + depth );
 		System.out.println("=====================================" );
 		return good_moves.get(rng.nextInt(good_moves.size()));
 	}
