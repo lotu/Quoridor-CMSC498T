@@ -10,6 +10,8 @@ import players.Player_ID;
  */
 public class Quoridor {
 	private static int MAX_TURNS = 200;
+	// Max time per turn in milliseconds
+	private static long max_t = 2000;
 	private static Player_ID[] players_ids = new Player_ID[]{Player_ID.PLAYER_1, Player_ID.PLAYER_2, Player_ID.PLAYER_3, Player_ID.PLAYER_4};
 	
 	public static Player_ID run_game(Vector<Player> players){
@@ -25,7 +27,9 @@ public class Quoridor {
 			// Print turn info here so debugging in player is printed after
 			System.out.println("Ply " + (current_turn +1 )+ ": Turn " +  (current_turn / 4 + 1) +":" );
 			System.out.println("Player " + (player_turn_idx +1 )+ " move:");
+			long start_t = System.currentTimeMillis();
 			Move move_made = players.get(player_turn_idx).make_move(new Board(b));
+			long delta_t = System.currentTimeMillis() - start_t;
 			// if the move is invalid
 			if(!b.apply_move(move_made)){
 				System.err.println("Player " + (player_turn_idx + 1) +" made an invalid move: " + move_made);
@@ -40,6 +44,7 @@ public class Quoridor {
 			
 			// Print board and other usefull information
 			System.out.println(move_made);
+			System.out.println("Time: " + delta_t + "ms " + ( (delta_t > max_t) ? "OVERTIME": "" ) );
 			System.out.println(b);
 			System.out.println("          Current   Walls  Distance");
 			System.out.println("          Location  Left    to Win");
