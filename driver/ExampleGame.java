@@ -43,7 +43,7 @@ public class ExampleGame {
 			players.get(i).set_seed( rng.nextLong() );
 		}
 		
-		Player_ID winner = Quoridor.run_game(players);
+		Player_ID winner = Quoridor.run_game(players, Boolean.TRUE);
 		
 		if(winner == null){
 			System.out.println("Tie game.");

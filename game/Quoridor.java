@@ -14,7 +14,7 @@ public class Quoridor {
 	private static long max_t = 2000;
 	private static Player_ID[] players_ids = new Player_ID[]{Player_ID.PLAYER_1, Player_ID.PLAYER_2, Player_ID.PLAYER_3, Player_ID.PLAYER_4};
 	
-	public static Player_ID run_game(Vector<Player> players){
+	public static Player_ID run_game(Vector<Player> players, Boolean print){
 		int current_turn = 0;
 		Board b = new Board();
 		int player_turn_idx = 0;
@@ -24,9 +24,11 @@ public class Quoridor {
 		}
 		
 		while(current_turn < MAX_TURNS && !(b.is_game_over())){
-			// Print turn info here so debugging in player is printed after
-			System.out.println("Ply " + (current_turn +1 )+ ": Turn " +  (current_turn / 4 + 1) +":" );
-			System.out.println("Player " + (player_turn_idx +1 )+ " move:");
+			if ( print ) {
+				// Print turn info here so debugging in player is printed after
+				System.out.println("Ply " + (current_turn +1 )+ ": Turn " +  (current_turn / 4 + 1) +":" );
+				System.out.println("Player " + (player_turn_idx +1 )+ " move:");
+			}
 			long start_t = System.currentTimeMillis();
 
 			// Handle odd situation where a player has no moves
@@ -50,20 +52,22 @@ public class Quoridor {
 				}
 			}
 			
-			// Print board and other usefull information
-			System.out.println(move_made);
-			System.out.println("Time: " + delta_t + "ms " + ( (delta_t > max_t) ? "OVERTIME": "" ) );
-			System.out.println(b);
-			System.out.println("          Current   Walls  Distance");
-			System.out.println("          Location  Left    to Win");
-			for(int i = 0; i < players.size(); i++){
-				System.out.println("Player " + (i + 1) + ":  (" +
-					b.get_player_location(players_ids[i]).get_x_coordinate() + "," +
-					b.get_player_location(players_ids[i]).get_y_coordinate() + ")      " +
-					b.get_wall_count(players_ids[i]) + "       " +
-					b.shortest_path(players_ids[i] ) );
+			if ( print ) {
+				// Print board and other usefull information
+				System.out.println(move_made);
+				System.out.println("Time: " + delta_t + "ms " + ( (delta_t > max_t) ? "OVERTIME": "" ) );
+				System.out.println(b);
+				System.out.println("          Current   Walls  Distance");
+				System.out.println("          Location  Left    to Win");
+				for(int i = 0; i < players.size(); i++){
+					System.out.println("Player " + (i + 1) + ":  (" +
+						b.get_player_location(players_ids[i]).get_x_coordinate() + "," +
+						b.get_player_location(players_ids[i]).get_y_coordinate() + ")      " +
+						b.get_wall_count(players_ids[i]) + "       " +
+						b.shortest_path(players_ids[i] ) );
+				}
+				System.out.println("");
 			}
-			System.out.println("");
 			
 			current_turn++;
 			player_turn_idx = (player_turn_idx + 1) % 4;
