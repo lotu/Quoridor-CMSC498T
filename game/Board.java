@@ -832,11 +832,11 @@ public class Board {
 	public String toString(){
 		StringBuffer buf = new StringBuffer();
 		for(int i = 0; i < 2*BOARD_SIZE +1; i++){
-			buf.append("-");
+			buf.append("*");
 		}
 		buf.append("\n");
 		for(int i = 0; i < BOARD_SIZE; i++){
-			buf.append("|");
+			buf.append("*");
 			for(int j = 0; j < BOARD_SIZE; j++){
 				if(board.get_cell(i, j).get_data() == Cell_Status.P1){
 					buf.append("1");
@@ -860,24 +860,34 @@ public class Board {
 						buf.append("|");
 					}
 					else{
-						buf.append("*");
+						buf.append("#");
 					}
 				}
 			}
-			buf.append("|\n");
+			buf.append("*\n");
 			
 			if(i < BOARD_SIZE - 1 && i >= 0){
 				int board_j = 0;
 				for(int j = 0; j < 2*BOARD_SIZE +1; j++){
-					if(j%2==0){
-						buf.append("-");
+					if(j == 0 || j == 2*BOARD_SIZE)
+						buf.append("*");
+					else if(j%2 == 0){
+						if(  j <= 2*(BOARD_SIZE-1)
+						  && !board.get_cell(i, j/2-1).get_neighbors().contains(board.get_cell(i, j/2))
+						  || !board.get_cell(i+1, j/2-1).get_neighbors().contains(board.get_cell(i+1, j/2))){
+							buf.append("#");
+						}
+						else
+							buf.append("-");
 					}
 					else{
 						if(board.get_cell(i+1, board_j).get_neighbors().contains(board.get_cell(i, board_j))){
 							buf.append("-");
 						}
 						else {
-							buf.append("*");
+							buf.setCharAt(buf.length()-1, '#');
+							buf.append("##");
+							j++;
 						}
 						board_j++;
 					}
@@ -887,8 +897,9 @@ public class Board {
 		}
 		
 		for(int i = 0; i < 2*BOARD_SIZE +1; i++){
-			buf.append("-");
+			buf.append("*");
 		}
+		buf.append("\n");
 		return buf.toString();
 	}
 	
