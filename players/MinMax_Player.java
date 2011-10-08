@@ -74,18 +74,24 @@ public class MinMax_Player implements Player {
 	public int[] eval_move(Board board, Move m, int depth) {
 		// use this one so the orignal isn't modified
 		//System.out.println( m );
+		// Generate target node
 		Board b = new Board( board );
 		b.apply_move( m );
+		// Should check for game over here
 
+		// Check for depth limit
 		if (depth == 0) {
 			return eval_board( b);
 		} //else 
+
+		// Do minMax of kids
 		int[] alpha = { LOSS, LOSS, LOSS, LOSS };
 		// get moves by next player
 		Player_ID p = next_player(m.getPlayer_making_move() );
 		Vector<Move> moves = b.get_possible_moves( p );
 		for ( int i=0; i < moves.size(); i++ ) {
 			int[] eval = eval_move( b , moves.get(i), depth -1 );
+			// Check if this move gives next player better pos
 			if ( alpha[p.ordinal()] < eval[p.ordinal()] )
 				alpha = eval;
 		}
@@ -113,6 +119,7 @@ public class MinMax_Player implements Player {
 		for ( int i = 0; i < 4; i++) {
 			// negate shortest path so shorter paths score higher
 			shortp[i]= - b.shortest_path(players_ids[i]);
+			// TODO: add number of walls left
 		}
 
 		// eval is mine - next best player
