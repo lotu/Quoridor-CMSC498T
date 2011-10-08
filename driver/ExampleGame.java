@@ -8,7 +8,9 @@ import java.util.Random;
 import players.Player;
 import players.Player_ID;
 import players.Random_Player;
+import players.MinMax_Player;
 import players.OneAhead_Player;
+import players.AlphaBeta_Player;
 import players.Wall_Follow_Player;
 
 /**
@@ -34,10 +36,13 @@ public class ExampleGame {
 		Random rng = new Random( seed );
 		
 		// Add 4 players
-		players.add(new Random_Player());
+		//players.add(new Random_Player());
+		//players.add(new Wall_Follow_Player());
+		//players.add(new OneAhead_Player());
+		players.add(new MinMax_Player());
+		players.add(new AlphaBeta_Player());
+		players.add(new MinMax_Player());
 		players.add(new OneAhead_Player());
-		players.add(new OneAhead_Player());
-		players.add(new Wall_Follow_Player());
 		
 		for(int i = 0; i < 4; i++){
 			players.get(i).set_seed( rng.nextLong() );

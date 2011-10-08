@@ -7,25 +7,11 @@ import java.util.Random;
 import java.util.Vector;
 
 /**
- * A player that uses MinMax for the game of Quoridor.
+ * A player that uses AlphaBeta for the game of Quoridor.
  */
-public class MinMax_Player implements Player {
-	protected Random rng;
-	protected Player_ID self_id;
-	protected static Player_ID[] players_ids = new Player_ID[]{Player_ID.PLAYER_1, Player_ID.PLAYER_2, Player_ID.PLAYER_3, Player_ID.PLAYER_4};
+public class AlphaBeta_Player extends MinMax_Player {
 	
-	protected int LOSS = -10000;
-	protected int TIE =       0;
-	protected int WIN =   10000;
-
-	/**
-	 * The player, whose turn it is next.
-	 */
-	public static Player_ID next_player( Player_ID pid) {
-		return players_ids[ (pid.ordinal() + 1) % 4 ];
-	}
-
-	public MinMax_Player(){
+	public AlphaBeta_Player(){
 		rng = new Random();
 	}
 
@@ -133,26 +119,4 @@ public class MinMax_Player implements Player {
 		return eval;
 	}
 
-
-	/**
-	 * ignores move notifications
-	 */
-	public void notify_of_move(Player_ID playerThatMadeMove, Move moveMade,
-			Board resultingBoard) {
-		// no code
-	}
-
-	/**
-	 * sets this players id for use with the game engine
-	 */
-	public void set_id(Player_ID id){
-		self_id = id;
-	}
-
-	/**
-	 * sets the random seed
-	 */
-	public void set_seed(long seed){
-		rng.setSeed(seed);
-	}
 }
