@@ -34,7 +34,7 @@ public class Wall_Follow_Player implements Player {
 	 */
 	public Move make_move(Board b) {
 		// get the x and y location of the player
-		Coordinate_Pair<Integer, Integer> loc = b.get_player_location(self_id);
+		Coordinate_Pair loc = b.get_player_location(self_id);
 		int x = loc.get_x_coordinate();
 		int y = loc.get_y_coordinate();
 
@@ -56,7 +56,7 @@ public class Wall_Follow_Player implements Player {
 								 self_id,
 								 // Why are x and y reversed? It's because that is
 								 // the order they is in the in constructor!!! Crazy
-								 new Coordinate_Pair<Integer, Integer>(target_y, target_x));
+								 new Coordinate_Pair(target_y, target_x));
 			}
 		}
 		// Only get here if we are somehow trapped/force to jump

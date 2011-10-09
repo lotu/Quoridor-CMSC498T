@@ -68,7 +68,7 @@ public class Move {
 	
 	private MOVE_TYPE move_type;
 	private Player_ID player_making_move;
-	private Coordinate_Pair<Integer, Integer> target_cell_coordinates;
+	private Coordinate_Pair target_cell_coordinates;
 	private Boolean is_horizontal;
 	
 	/**
@@ -78,7 +78,7 @@ public class Move {
 	 * @param player_id
 	 * @param target
 	 */
-	public Move(MOVE_TYPE type, Player_ID player_id, Coordinate_Pair<Integer, Integer> target_cell_coordinates){
+	public Move(MOVE_TYPE type, Player_ID player_id, Coordinate_Pair target_cell_coordinates){
 		this.move_type = type;
 		this.player_making_move = player_id;
 		this.target_cell_coordinates = target_cell_coordinates;
@@ -93,7 +93,7 @@ public class Move {
 	 * @param target_cell_coordinates
 	 * @param is_horizontal
 	 */
-	public Move(MOVE_TYPE type, Player_ID player_id, Coordinate_Pair<Integer, Integer> target_cell_coordinates, boolean is_horizontal){
+	public Move(MOVE_TYPE type, Player_ID player_id, Coordinate_Pair target_cell_coordinates, boolean is_horizontal){
 		this(type, player_id, target_cell_coordinates);
 		
 		this.is_horizontal = is_horizontal;
@@ -107,7 +107,7 @@ public class Move {
 		return player_making_move;
 	}
 
-	public Coordinate_Pair<Integer, Integer> getTarget_cell_coordinates() {
+	public Coordinate_Pair getTarget_cell_coordinates() {
 		return target_cell_coordinates;
 	}
 

@@ -18,12 +18,12 @@ public class Board {
 	private static final int BOARD_SIZE = 9;
 	private static final int INITIAL_WALLS = 5;
 	private RectangularGrid<Cell_Status> board;
-	private Coordinate_Pair<Integer, Integer> p1_location;
-	private Coordinate_Pair<Integer, Integer> p2_location;
-	private Coordinate_Pair<Integer, Integer> p3_location;
-	private Coordinate_Pair<Integer, Integer> p4_location;
-	private HashMap<Coordinate_Pair<Integer, Integer>, Boolean> horizontal_wall_placement_locations;
-	private HashMap<Coordinate_Pair<Integer, Integer>, Boolean> vertical_wall_placement_locations;
+	private Coordinate_Pair p1_location;
+	private Coordinate_Pair p2_location;
+	private Coordinate_Pair p3_location;
+	private Coordinate_Pair p4_location;
+	private HashMap<Coordinate_Pair, Boolean> horizontal_wall_placement_locations;
+	private HashMap<Coordinate_Pair, Boolean> vertical_wall_placement_locations;
 	private int[] walls;
 	
 	/**
@@ -42,16 +42,16 @@ public class Board {
 		
 		//put player pawns on the board in starting locations
 		board.get_cell(0, BOARD_SIZE/2).set_data(Cell_Status.P1);
-		p1_location = new Coordinate_Pair<Integer, Integer>(0, BOARD_SIZE/2);
+		p1_location = new Coordinate_Pair(0, BOARD_SIZE/2);
 		board.get_cell(BOARD_SIZE/2, BOARD_SIZE-1).set_data(Cell_Status.P2);
-		p2_location = new Coordinate_Pair<Integer, Integer>(BOARD_SIZE/2, BOARD_SIZE - 1);
+		p2_location = new Coordinate_Pair(BOARD_SIZE/2, BOARD_SIZE - 1);
 		board.get_cell(BOARD_SIZE-1, BOARD_SIZE/2).set_data(Cell_Status.P3);
-		p3_location = new Coordinate_Pair<Integer, Integer>(BOARD_SIZE-1, BOARD_SIZE/2);
+		p3_location = new Coordinate_Pair(BOARD_SIZE-1, BOARD_SIZE/2);
 		board.get_cell(BOARD_SIZE/2, 0).set_data(Cell_Status.P4);
-		p4_location = new Coordinate_Pair<Integer, Integer>(BOARD_SIZE/2, 0);
+		p4_location = new Coordinate_Pair(BOARD_SIZE/2, 0);
 		
-		horizontal_wall_placement_locations = new HashMap<Coordinate_Pair<Integer,Integer>, Boolean>();
-		vertical_wall_placement_locations = new HashMap<Coordinate_Pair<Integer,Integer>, Boolean>();
+		horizontal_wall_placement_locations = new HashMap<Coordinate_Pair, Boolean>();
+		vertical_wall_placement_locations = new HashMap<Coordinate_Pair, Boolean>();
 	}
 	
 	/**
@@ -72,17 +72,17 @@ public class Board {
 		
 		//put player pawns on the board in starting locations
 		board.get_cell(b.p1_location.get_y_coordinate(), b.p1_location.get_x_coordinate()).set_data(Cell_Status.P1);
-		p1_location = new Coordinate_Pair<Integer, Integer>(b.p1_location.get_y_coordinate(), b.p1_location.get_x_coordinate());
+		p1_location = new Coordinate_Pair(b.p1_location.get_y_coordinate(), b.p1_location.get_x_coordinate());
 		board.get_cell(b.p2_location.get_y_coordinate(), b.p2_location.get_x_coordinate()).set_data(Cell_Status.P2);
-		p2_location = new Coordinate_Pair<Integer, Integer>(b.p2_location.get_y_coordinate(), b.p2_location.get_x_coordinate());
+		p2_location = new Coordinate_Pair(b.p2_location.get_y_coordinate(), b.p2_location.get_x_coordinate());
 		board.get_cell(b.p3_location.get_y_coordinate(), b.p3_location.get_x_coordinate()).set_data(Cell_Status.P3);
-		p3_location = new Coordinate_Pair<Integer, Integer>(b.p3_location.get_y_coordinate(), b.p3_location.get_x_coordinate());
+		p3_location = new Coordinate_Pair(b.p3_location.get_y_coordinate(), b.p3_location.get_x_coordinate());
 		board.get_cell(b.p4_location.get_y_coordinate(), b.p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
-		p4_location = new Coordinate_Pair<Integer, Integer>(b.p4_location.get_y_coordinate(), b.p4_location.get_x_coordinate());
+		p4_location = new Coordinate_Pair(b.p4_location.get_y_coordinate(), b.p4_location.get_x_coordinate());
 	
-		horizontal_wall_placement_locations = new HashMap<Coordinate_Pair<Integer,Integer>, Boolean>();
-		vertical_wall_placement_locations = new HashMap<Coordinate_Pair<Integer,Integer>, Boolean>();
-		for(Coordinate_Pair<Integer, Integer> key : b.horizontal_wall_placement_locations.keySet()){
+		horizontal_wall_placement_locations = new HashMap<Coordinate_Pair, Boolean>();
+		vertical_wall_placement_locations = new HashMap<Coordinate_Pair, Boolean>();
+		for(Coordinate_Pair key : b.horizontal_wall_placement_locations.keySet()){
 			int row = key.get_y_coordinate();
 			int col = key.get_x_coordinate();
 			board.get_cell(row, col).get_neighbors().remove(board.get_cell(row-1, col));
@@ -90,9 +90,9 @@ public class Board {
 			board.get_cell(row, col+1).get_neighbors().remove(board.get_cell(row-1, col+1));
 			board.get_cell(row-1, col+1).get_neighbors().remove(board.get_cell(row, col+1));
 
-			horizontal_wall_placement_locations.put(new Coordinate_Pair<Integer, Integer>(row, col), true);
+			horizontal_wall_placement_locations.put(new Coordinate_Pair(row, col), true);
 		}
-		for(Coordinate_Pair<Integer, Integer> key : b.vertical_wall_placement_locations.keySet()){
+		for(Coordinate_Pair key : b.vertical_wall_placement_locations.keySet()){
 			int row = key.get_y_coordinate();
 			int col = key.get_x_coordinate();
 	
@@ -101,7 +101,7 @@ public class Board {
 			board.get_cell(row+1, col).get_neighbors().remove(board.get_cell(row+1, col-1));
 			board.get_cell(row+1, col-1).get_neighbors().remove(board.get_cell(row+1, col));
 
-			vertical_wall_placement_locations.put(new Coordinate_Pair<Integer, Integer>(row, col), true);
+			vertical_wall_placement_locations.put(new Coordinate_Pair(row, col), true);
 		}
 	}
 	
@@ -256,11 +256,11 @@ public class Board {
 	/**
 	 * A pair of accessors for the wall locations maps.
 	 */
-	public HashMap<Coordinate_Pair<Integer, Integer>, Boolean> getHorizontal_wall_placement_locations() {
+	public HashMap<Coordinate_Pair, Boolean> getHorizontal_wall_placement_locations() {
 		return horizontal_wall_placement_locations;
 	}
 
-	public HashMap<Coordinate_Pair<Integer, Integer>, Boolean> getVertical_wall_placement_locations() {
+	public HashMap<Coordinate_Pair, Boolean> getVertical_wall_placement_locations() {
 		return vertical_wall_placement_locations;
 	}
 
@@ -279,12 +279,12 @@ public class Board {
 		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
 		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
 		
-		Stack<Coordinate_Pair<Integer, Integer>> tovisit_stack = new Stack<Coordinate_Pair<Integer, Integer>>();
-		HashMap<Coordinate_Pair<Integer, Integer>, Boolean> visited_map = new HashMap<Coordinate_Pair<Integer, Integer>, Boolean>();
-		tovisit_stack.push(new Coordinate_Pair<Integer, Integer>(from_row, from_col));
+		Stack<Coordinate_Pair> tovisit_stack = new Stack<Coordinate_Pair>();
+		HashMap<Coordinate_Pair, Boolean> visited_map = new HashMap<Coordinate_Pair, Boolean>();
+		tovisit_stack.push(new Coordinate_Pair(from_row, from_col));
 
 		while(!tovisit_stack.isEmpty()){
-			Coordinate_Pair<Integer, Integer> next = tovisit_stack.pop();
+			Coordinate_Pair next = tovisit_stack.pop();
 			
 			//is this in the target column?
 			if(next.get_x_coordinate() == to_col){
@@ -301,7 +301,7 @@ public class Board {
 			
 			//up
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate())){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()-1, next.get_x_coordinate());
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate());
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
@@ -309,7 +309,7 @@ public class Board {
 				
 			//down
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate())){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()+1, next.get_x_coordinate());
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate());
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
@@ -317,7 +317,7 @@ public class Board {
 			
 			//left
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate(), next.get_x_coordinate()-1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate(), next.get_x_coordinate()-1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate(), next.get_x_coordinate()-1);
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
@@ -325,7 +325,7 @@ public class Board {
 			
 			//right
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate(), next.get_x_coordinate()+1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate(), next.get_x_coordinate()+1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate(), next.get_x_coordinate()+1);
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
@@ -334,28 +334,28 @@ public class Board {
 			//check for jumpable players - i.e., check the four diagonal moves
 			//up-left
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate()-1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()-1, next.get_x_coordinate()-1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate()-1);
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
 			}
 			//up-right
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate()+1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()-1, next.get_x_coordinate()+1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate()+1);
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
 			}
 			//down-right
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate()+1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()+1, next.get_x_coordinate()+1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate()+1);
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
 			}
 			//down-left
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate()-1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()+1, next.get_x_coordinate()-1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate()-1);
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
@@ -385,12 +385,12 @@ public class Board {
 		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
 		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
 		
-		Stack<Coordinate_Pair<Integer, Integer>> tovisit_stack = new Stack<Coordinate_Pair<Integer, Integer>>();
-		HashMap<Coordinate_Pair<Integer, Integer>, Boolean> visited_map = new HashMap<Coordinate_Pair<Integer, Integer>, Boolean>();
-		tovisit_stack.push(new Coordinate_Pair<Integer, Integer>(from_row, from_col));
+		Stack<Coordinate_Pair> tovisit_stack = new Stack<Coordinate_Pair>();
+		HashMap<Coordinate_Pair, Boolean> visited_map = new HashMap<Coordinate_Pair, Boolean>();
+		tovisit_stack.push(new Coordinate_Pair(from_row, from_col));
 
 		while(!tovisit_stack.isEmpty()){
-			Coordinate_Pair<Integer, Integer> next = tovisit_stack.pop();
+			Coordinate_Pair next = tovisit_stack.pop();
 			
 			//is this in the target column?
 			if(next.get_y_coordinate() == to_row){
@@ -407,7 +407,7 @@ public class Board {
 			
 			//up
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate())){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()-1, next.get_x_coordinate());
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate());
 				if(visited_map.get(next_cell) == null){
 					tovisit_stack.push(next_cell);
 				}
@@ -415,7 +415,7 @@ public class Board {
 				
 			//down
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate())){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()+1, next.get_x_coordinate());
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate());
 				if(visited_map.get(next_cell) == null){
 					tovisit_stack.push(next_cell);
 				}
@@ -423,7 +423,7 @@ public class Board {
 			
 			//left
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate(), next.get_x_coordinate()-1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate(), next.get_x_coordinate()-1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate(), next.get_x_coordinate()-1);
 				if(visited_map.get(next_cell) == null){
 					tovisit_stack.push(next_cell);
 				}
@@ -431,7 +431,7 @@ public class Board {
 			
 			//right
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate(), next.get_x_coordinate()+1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate(), next.get_x_coordinate()+1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate(), next.get_x_coordinate()+1);
 				if(visited_map.get(next_cell) == null){
 					tovisit_stack.push(next_cell);
 				}
@@ -440,28 +440,28 @@ public class Board {
 			//check for jumpable players - i.e., check the four diagonal moves
 			//up-left
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate()-1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()-1, next.get_x_coordinate()-1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate()-1);
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
 			}
 			//up-right
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate()+1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()-1, next.get_x_coordinate()+1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate()+1);
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
 			}
 			//down-right
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate()+1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()+1, next.get_x_coordinate()+1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate()+1);
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
 			}
 			//down-left
 			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate()-1)){
-				Coordinate_Pair<Integer, Integer> next_cell = new Coordinate_Pair<Integer, Integer>(next.get_y_coordinate()+1, next.get_x_coordinate()-1);
+				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate()-1);
 				if(visited_map.get(next_cell) == null){ //prevent cycles
 					tovisit_stack.push(next_cell);
 				}
@@ -583,13 +583,13 @@ public class Board {
 		
 		//will the wall intersect another wall
 		if(place_horizontally){
-			if(vertical_wall_placement_locations.get(new Coordinate_Pair<Integer, Integer>(row - 1, col+1)) != null){
+			if(vertical_wall_placement_locations.get(new Coordinate_Pair(row - 1, col+1)) != null){
 				//check for a vertical intersecting wall
 				return false;
 			}
 		}
 		else{
-			if(horizontal_wall_placement_locations.get(new Coordinate_Pair<Integer, Integer>(row + 1, col-1)) != null){
+			if(horizontal_wall_placement_locations.get(new Coordinate_Pair(row + 1, col-1)) != null){
 				//check for a horizontal intersecting wall
 				return false;
 			}
@@ -597,12 +597,12 @@ public class Board {
 		
 		//walls must be within 1 space of another wall or 2 spaces of a pawn
 		boolean is_wall_too_far_from_walls = true;
-		for(Coordinate_Pair<Integer, Integer> wall : horizontal_wall_placement_locations.keySet()){
+		for(Coordinate_Pair wall : horizontal_wall_placement_locations.keySet()){
 			if(distance_between_walls(row, col, place_horizontally, wall.get_y_coordinate(), wall.get_x_coordinate(), true) <= 1){
 				is_wall_too_far_from_walls = false;
 			}
 		}
-		for(Coordinate_Pair<Integer, Integer> wall : vertical_wall_placement_locations.keySet()){
+		for(Coordinate_Pair wall : vertical_wall_placement_locations.keySet()){
 			if(distance_between_walls(row, col, place_horizontally, wall.get_y_coordinate(), wall.get_x_coordinate(), false) <= 1){
 				is_wall_too_far_from_walls = false;
 			}
@@ -681,14 +681,14 @@ public class Board {
 		Integer curr_min = Integer.MAX_VALUE; 
 		Coordinate_Pair[] locations = new Coordinate_Pair[]{p1_location, p2_location, p3_location, p4_location};
 		for(int i= 0; i < locations.length; i++){
-			point_distances[0] = Math.abs(wall_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()) + Math.abs(wall_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate());
-			point_distances[1] = Math.abs(wall_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()) + Math.abs(wall_col - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1));
-			point_distances[2] = Math.abs(wall_row - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate() +1)) + Math.abs(wall_col - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1));
-			point_distances[3] = Math.abs(wall_row - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()+1)) + Math.abs(wall_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate());
-			point_distances[4] = Math.abs(wall_end_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()) + Math.abs(wall_end_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate());
-			point_distances[5] = Math.abs(wall_end_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()) + Math.abs(wall_end_col - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1));
-			point_distances[6] = Math.abs(wall_end_row - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate() +1)) + Math.abs(wall_end_col - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1));
-			point_distances[7] = Math.abs(wall_end_row - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()+1)) + Math.abs(wall_end_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate());
+			point_distances[0] = Math.abs(wall_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) + Math.abs(wall_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
+			point_distances[1] = Math.abs(wall_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) + Math.abs(wall_col - ((Coordinate_Pair)locations[i]).get_x_coordinate()+1);
+			point_distances[2] = Math.abs(wall_row - ((Coordinate_Pair)locations[i]).get_y_coordinate() +1) + Math.abs(wall_col - ((Coordinate_Pair)locations[i]).get_x_coordinate()+1);
+			point_distances[3] = Math.abs(wall_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()+1) + Math.abs(wall_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
+			point_distances[4] = Math.abs(wall_end_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) + Math.abs(wall_end_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
+			point_distances[5] = Math.abs(wall_end_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) + Math.abs(wall_end_col - ((Coordinate_Pair)locations[i]).get_x_coordinate()+1);
+			point_distances[6] = Math.abs(wall_end_row - ((Coordinate_Pair)locations[i]).get_y_coordinate() +1) + Math.abs(wall_end_col - ((Coordinate_Pair)locations[i]).get_x_coordinate()+1);
+			point_distances[7] = Math.abs(wall_end_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()+1) + Math.abs(wall_end_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
 			
 			if(minimum_value(point_distances) < curr_min){
 				curr_min = minimum_value(point_distances);
@@ -782,14 +782,14 @@ public class Board {
 				board.get_cell(row-1, col).get_neighbors().remove(board.get_cell(row, col));
 				board.get_cell(row, col+1).get_neighbors().remove(board.get_cell(row-1, col+1));
 				board.get_cell(row-1, col+1).get_neighbors().remove(board.get_cell(row, col+1));
-				horizontal_wall_placement_locations.put(new Coordinate_Pair<Integer, Integer>(row, col), true);
+				horizontal_wall_placement_locations.put(new Coordinate_Pair(row, col), true);
 			}
 			else{
 				board.get_cell(row, col).get_neighbors().remove(board.get_cell(row, col-1));
 				board.get_cell(row, col-1).get_neighbors().remove(board.get_cell(row, col));
 				board.get_cell(row+1, col).get_neighbors().remove(board.get_cell(row+1, col-1));
 				board.get_cell(row+1, col-1).get_neighbors().remove(board.get_cell(row+1, col));
-				vertical_wall_placement_locations.put(new Coordinate_Pair<Integer, Integer>(row, col), true);
+				vertical_wall_placement_locations.put(new Coordinate_Pair(row, col), true);
 			}
 			
 			return true; //the wall could was successfully placed in the desired location
@@ -812,19 +812,19 @@ public class Board {
 		if(can_move_to(from_row, from_col, to_row, to_col)){
 			switch (player) {
 			case PLAYER_1:
-				p1_location = new Coordinate_Pair<Integer, Integer>(to_row, to_col);
+				p1_location = new Coordinate_Pair(to_row, to_col);
 				board.get_cell(to_row, to_col).set_data(Cell_Status.P1);
 				break;
 			case PLAYER_2:
-				p2_location = new Coordinate_Pair<Integer, Integer>(to_row, to_col);
+				p2_location = new Coordinate_Pair(to_row, to_col);
 				board.get_cell(to_row, to_col).set_data(Cell_Status.P2);
 				break;
 			case PLAYER_3:
-				p3_location = new Coordinate_Pair<Integer, Integer>(to_row, to_col);
+				p3_location = new Coordinate_Pair(to_row, to_col);
 				board.get_cell(to_row, to_col).set_data(Cell_Status.P3);
 				break;
 			case PLAYER_4:
-				p4_location = new Coordinate_Pair<Integer, Integer>(to_row, to_col);
+				p4_location = new Coordinate_Pair(to_row, to_col);
 				board.get_cell(to_row, to_col).set_data(Cell_Status.P4);
 				break;
 			default:
@@ -1019,52 +1019,52 @@ public class Board {
 		}
 		//up
 		if(can_move_to(player_row_location, player_col_location, player_row_location-1, player_col_location)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location-1, player_col_location)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location-1, player_col_location)));
 		}
 		//down
 		if(can_move_to(player_row_location, player_col_location, player_row_location+1, player_col_location)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location+1, player_col_location)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location+1, player_col_location)));
 		}
 		//left
 		if(can_move_to(player_row_location, player_col_location, player_row_location, player_col_location-1)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location, player_col_location-1)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location, player_col_location-1)));
 		}
 		//right
 		if(can_move_to(player_row_location, player_col_location, player_row_location, player_col_location+1)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location, player_col_location+1)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location, player_col_location+1)));
 		}
 		//up-left
 		if(can_move_to(player_row_location, player_col_location, player_row_location-1, player_col_location-1)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location-1, player_col_location-1)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location-1, player_col_location-1)));
 		}
 		//up-right
 		if(can_move_to(player_row_location, player_col_location, player_row_location-1, player_col_location+1)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location-1, player_col_location+1)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location-1, player_col_location+1)));
 		}
 		//down-right
 		if(can_move_to(player_row_location, player_col_location, player_row_location+1, player_col_location+1)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location+1, player_col_location+1)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location+1, player_col_location+1)));
 		}
 		//down-left
 		if(can_move_to(player_row_location, player_col_location, player_row_location+1, player_col_location-1)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location+1, player_col_location-1)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location+1, player_col_location-1)));
 		}
 		//jumping moves
 		//up2
 		if(can_move_to(player_row_location, player_col_location, player_row_location-2, player_col_location)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location-2, player_col_location)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location-2, player_col_location)));
 		}
 		//down2
 		if(can_move_to(player_row_location, player_col_location, player_row_location+2, player_col_location)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location+2, player_col_location)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location+2, player_col_location)));
 		}
 		//left2
 		if(can_move_to(player_row_location, player_col_location, player_row_location, player_col_location-2)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location, player_col_location-2)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location, player_col_location-2)));
 		}
 		//right2
 		if(can_move_to(player_row_location, player_col_location, player_row_location, player_col_location+2)){
-			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair<Integer, Integer>(player_row_location, player_col_location+2)));
+			possible_moves.add(new Move(MOVE_TYPE.MOVE_PAWN, player_id, new Coordinate_Pair(player_row_location, player_col_location+2)));
 		}
 		
 		//wall-placing options
@@ -1072,10 +1072,10 @@ public class Board {
 			for(int i = 0; i <= BOARD_SIZE-1; i++){
 				for(int j = 0; j <= BOARD_SIZE-1; j++){
 					if(can_place_wall(i, j, true)){
-						possible_moves.add(new Move(MOVE_TYPE.PLACE_WALL, player_id, new Coordinate_Pair<Integer, Integer>(i, j), true));
+						possible_moves.add(new Move(MOVE_TYPE.PLACE_WALL, player_id, new Coordinate_Pair(i, j), true));
 					}
 					if(can_place_wall(i, j, false)){
-						possible_moves.add(new Move(MOVE_TYPE.PLACE_WALL, player_id, new Coordinate_Pair<Integer, Integer>(i, j), false));
+						possible_moves.add(new Move(MOVE_TYPE.PLACE_WALL, player_id, new Coordinate_Pair(i, j), false));
 					}
 				}
 			}
@@ -1160,7 +1160,7 @@ public class Board {
 		return min_idx;
 	}
 	
-	public Coordinate_Pair<Integer, Integer> get_player_location(Player_ID p){
+	public Coordinate_Pair get_player_location(Player_ID p){
 		switch(p){
 			case PLAYER_1:
 				return p1_location;
@@ -1228,22 +1228,19 @@ public class Board {
 | | | | | | | | | |
 -------------------
 		 */
+				
+		b.board.get_cell(b.p3_location.get_y_coordinate(), b.p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		b.p3_location = new Coordinate_Pair(3, 0);
+		b.board.get_cell(3, 0).set_data(Cell_Status.P3);
 		
-		b.place_wall(8, 3, true);
-		System.out.println("After placing a walls: \n" + b);
+		b.board.get_cell(b.p4_location.get_y_coordinate(), b.p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		b.p4_location = new Coordinate_Pair(3, 1);
+		b.board.get_cell(3, 1).set_data(Cell_Status.P4);
 		
 		b.place_wall(7, 7, true);
 		System.out.println("After placing a walls: \n" + b);
 		
 		
-//		b.board.get_cell(b.p3_location.get_y_coordinate(), b.p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
-//		b.p3_location = new Coordinate_Pair<Integer, Integer>(3, 0);
-//		b.board.get_cell(3, 0).set_data(Cell_Status.P3);
-//		
-//		b.board.get_cell(b.p4_location.get_y_coordinate(), b.p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
-//		b.p4_location = new Coordinate_Pair<Integer, Integer>(3, 1);
-//		b.board.get_cell(3, 1).set_data(Cell_Status.P4);
-//		
 //		b.place_wall(3, 0, true);
 //		b.place_wall(3, 2, true);
 //		System.out.println(b.can_move_to(3, 0, 3, 2));

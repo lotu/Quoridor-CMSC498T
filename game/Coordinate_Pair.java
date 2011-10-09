@@ -4,31 +4,29 @@ package game;
  * A generic class for maintaining a set of coordinates mapping into
  * a coordinate graph.
  *
- * @param <T>
- * @param <S>
  */
-public class Coordinate_Pair <T,S>{
-	private T y;
-	private S x;
+public class Coordinate_Pair {
+	private int y;
+	private int x;
 	
-	public Coordinate_Pair(T f, S s){
+	public Coordinate_Pair(int f, int s){
 		this.y = f;
 		this.x = s;
 	}
 	
-	public T get_y_coordinate(){
+	public int get_y_coordinate(){
 		return y;
 	}
 	
-	public S get_x_coordinate(){
+	public int get_x_coordinate(){
 		return x;
 	}
 	
 	public int hashCode() {
-        int hashFirst = y != null ? y.hashCode() : 0;
-        int hashSecond = x != null ? x.hashCode() : 0;
+        //int hashFirst = y != null ? y.hashCode() : 0;
+        //int hashSecond = x != null ? x.hashCode() : 0;
 
-        return (hashFirst) + (31 * hashSecond);
+        return (x) + (20 * y);
     }
 	
 	@SuppressWarnings("unchecked")
@@ -37,6 +35,6 @@ public class Coordinate_Pair <T,S>{
 			return false;
 		Coordinate_Pair other = (Coordinate_Pair) o;
 		
-		return this.y.equals(other.y) && this.x.equals(other.x);
+		return this.y == other.y && this.x == other.x;
 	}
 }
