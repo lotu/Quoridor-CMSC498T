@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.Vector;
 
 /**
- * A player that uses MinMax for the game of Quoridor.
+ * A player that uses MinMax really max n for the game of Quoridor.
  */
 public class MinMax_Player implements Player {
 	protected Random rng;
@@ -18,6 +18,8 @@ public class MinMax_Player implements Player {
 	protected int TIE =       0;
 	protected int WIN =   10000;
 
+	// number of board evaluated
+	protected int evaluated = 0;
 	/**
 	 * The player, whose turn it is next.
 	 */
@@ -36,9 +38,10 @@ public class MinMax_Player implements Player {
 		long start = System.currentTimeMillis();
 
 		Vector<Move> moves = b.get_possible_moves(self_id);
-		Vector<Move> good_moves = new Vector<Move>();
+		Vector<Move> good_moves = (Vector)moves.clone();
 		// Increment to zero at start of loop
 		int depth = -1;
+		evaluated = 0;
 		// Iterative deepening
 		while ( System.currentTimeMillis() - start < 1000 )
 		{
@@ -64,6 +67,8 @@ public class MinMax_Player implements Player {
 			System.out.println( good_moves.get(i) );
 		}
 		System.out.println("Depth: " + depth );
+		System.out.println("Evaluated: " + evaluated + " " +
+			evaluated / ((System.currentTimeMillis() -start) / 1000.0 ) + "eval/sec" );
 		System.out.println("=====================================" );
 		return good_moves.get(rng.nextInt(good_moves.size()));
 	}
@@ -100,6 +105,7 @@ public class MinMax_Player implements Player {
 
 	public int[] eval_board(Board b){
 
+		evaluated += 1;
 		// if game is over
 		if ( b.is_game_over() ) {
 			Player_ID p = b.compute_winner();
