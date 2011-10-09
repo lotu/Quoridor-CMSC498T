@@ -4,6 +4,9 @@ import game.Move.MOVE_TYPE;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.Vector;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
 
 import players.Player_ID;
 
@@ -375,6 +378,31 @@ public class Board {
 		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
 	}
 
+	private class ToEndHeurstic implements Comparator<Coordinate_Pair> {
+		
+		private boolean horiz;
+		private boolean postive;
+
+		public ToEndHeurstic(){
+			horiz = true;
+			postive = true;
+		}
+
+		public int compare( Coordinate_Pair a, Coordinate_Pair b){ 
+			if (horiz ) {
+				if ( postive )
+					return a.get_x_coordinate() - b.get_x_coordinate();
+				else
+					return b.get_x_coordinate() - a.get_x_coordinate();
+			} else { 
+				if ( postive )
+					return a.get_y_coordinate() - b.get_y_coordinate();
+				else
+					return b.get_y_coordinate() - a.get_y_coordinate();
+			}
+		}
+	}
+
 	/**
 	 * Does a path exist from the provided board location to the specified row.
 	 * 
@@ -384,15 +412,54 @@ public class Board {
 	 * @return
 	 */
 	private boolean path_exists_to_row(int from_row, int from_col, int to_row){
+		// blatentlly copied form wikipedia a star
 		//remove pawns from the board temporaily so jumps can be ignored
 		remove_players();
+		Coordinate_Pair start = new Coordinate_Pair( from_row, from_col );
 
-		Stack<Coordinate_Pair> tovisit_stack = new Stack<Coordinate_Pair>();
-		HashMap<Coordinate_Pair, Boolean> visited_map = new HashMap<Coordinate_Pair, Boolean>();
-		tovisit_stack.push(new Coordinate_Pair(from_row, from_col));
+		HashSet<Coordinate_Pair> closed = new HashSet<Coordinate_Pair>( ); // half the boardish
+		PriorityQueue<Coordinate_Pair> open = PriorityQueue<Coordinate_Pair>( 10, new ToEndHeurstic() );
+		HashMap<Coordinate_Pair,Coordinate_Pair> came_from = new HashMap<Coordinate_Pair,Coordinate_Pair>( ); // half the boardish
 
-		while(!tovisit_stack.isEmpty()){
-			Coordinate_Pair next = tovisit_stack.pop();
+		HashMap<Coordinate_Pair, int> g_score = new HashMap<Coordinate_Pair, int>();  // Cost to this node
+		HashMap<Coordinate_Pair, int> h_score = new HashMap<Coordinate_Pair, int>();  // Heurstic at this node
+		HashMap<Coordinate_Pair, int> f_score = new HashMap<Coordinate_Pair, int>();  // g + h
+
+		
+		while(!open.isEmpty()){
+			Coordinate_Pair next = open.poll();
+			// if x is goal
+			if ( false )
+				return true;
+
+			closed.add( next );
+			// Fox each child y
+			for( ) {
+				if ( closed.contains( y )
+					continue;
+				int tentative_g_score = g_score.get( x ) + 1;
+				boolean tentative_is_beter = false;
+
+				if ( ! open.contains(y) ) {
+					open.add(y);
+					tentative_is_beter = true;
+				} else if ( tentative_g_score < g_score.get(y) {
+					tentative_is_beter = true;
+				}
+
+				if ( tentative_is_beter ) {
+					came_from.put( y , x );
+					g_score.put( y , tentative_g_score );
+					h_score.put( y , // heuristic_cost_estimate to goal );
+					f_score.put( y , g_score.get( y ) + h_score.get( y ) );'
+				}
+			}
+		}
+		return false;
+	} // end a star
+
+
+			}
 			
 			//is this in the target column?
 			if(next.get_y_coordinate() == to_row){
