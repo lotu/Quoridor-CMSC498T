@@ -6,8 +6,8 @@ package game;
  *
  */
 public class Coordinate_Pair {
-	private int y;
-	private int x;
+	private int y; // row
+	private int x; // col
 	
 	public Coordinate_Pair(int f, int s){
 		this.y = f;
