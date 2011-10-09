@@ -274,10 +274,7 @@ public class Board {
 	 */
 	private boolean path_exists_to_column(int from_row, int from_col, int to_col){
 		//remove pawns from the board temporaily so jumps can be ignored
-		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.FREE);
-		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.FREE);
-		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
-		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		remove_players();
 		
 		Stack<Coordinate_Pair> tovisit_stack = new Stack<Coordinate_Pair>();
 		HashMap<Coordinate_Pair, Boolean> visited_map = new HashMap<Coordinate_Pair, Boolean>();
@@ -289,10 +286,7 @@ public class Board {
 			//is this in the target column?
 			if(next.get_x_coordinate() == to_col){
 				//replace pawns
-				board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.P1);
-				board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.P2);
-				board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.P3);
-				board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
+				replace_players();
 				return true;
 			}
 			
@@ -363,13 +357,24 @@ public class Board {
 		}
 		
 		//replace player pawns
+		replace_players();
+		return false;
+	}
+
+	private void remove_players() {
+		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+	}
+
+	private void replace_players() {
 		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.P1);
 		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.P2);
 		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.P3);
 		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
-		return false;
 	}
-	
+
 	/**
 	 * Does a path exist from the provided board location to the specified row.
 	 * 
@@ -380,11 +385,8 @@ public class Board {
 	 */
 	private boolean path_exists_to_row(int from_row, int from_col, int to_row){
 		//remove pawns from the board temporaily so jumps can be ignored
-		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.FREE);
-		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.FREE);
-		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
-		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
-		
+		remove_players();
+
 		Stack<Coordinate_Pair> tovisit_stack = new Stack<Coordinate_Pair>();
 		HashMap<Coordinate_Pair, Boolean> visited_map = new HashMap<Coordinate_Pair, Boolean>();
 		tovisit_stack.push(new Coordinate_Pair(from_row, from_col));
@@ -395,10 +397,7 @@ public class Board {
 			//is this in the target column?
 			if(next.get_y_coordinate() == to_row){
 				//replace player pawns
-				board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.P1);
-				board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.P2);
-				board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.P3);
-				board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
+				replace_players();
 				return true;
 			}
 			
@@ -469,10 +468,7 @@ public class Board {
 		}
 		
 		//replace player pawns
-		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.P1);
-		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.P2);
-		board.get_cell(p3_location.get_y_coordinate(), p3_location.get_x_coordinate()).set_data(Cell_Status.P3);
-		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
+		replace_players();
 		
 		return false;
 	}
