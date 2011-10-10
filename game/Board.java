@@ -93,8 +93,10 @@ public class Board {
 		board.get_cell(b.player_location[3].get_y_coordinate(), b.player_location[3].get_x_coordinate()).set_data(Cell_Status.P4);
 		player_location[3] = new Coordinate_Pair(b.player_location[3].get_y_coordinate(), b.player_location[3].get_x_coordinate());
 	
-		// Create new empty cached path don't use the exsiting one.
+		// Create copy the cache
 		cached_path = new Path[4];
+		for (int i = 0; i < 4 ; i++ )
+			cached_path[i] = b.cached_path[i];
 		cache_hit = 0;
 		cache_miss = 0;
 
@@ -378,8 +380,10 @@ public class Board {
 		// Check cached path first
 		if (cached_path[player.ordinal() ] != null ) {
 			if( is_valid_path( cached_path[player.ordinal() ] ) )
+			{
 				cache_hit ++;
 				return true;
+			}
 		}
 		cache_miss ++;
 
