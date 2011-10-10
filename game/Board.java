@@ -416,70 +416,34 @@ public class Board {
 	 * Returns the shortest path distance.
 	 */
 	public int shortest_path(Player_ID p){
-		HashMap<Cell<Cell_Status>, Integer> distances = null;
-		Integer min_dist = null;
-		int ret = 0;
-		
-		//remove pawns from the board temporaily so jumps can be ignored
-		board.get_cell(player_location[0].get_y_coordinate(), player_location[0].get_x_coordinate()).set_data(Cell_Status.FREE);
-		board.get_cell(player_location[1].get_y_coordinate(), player_location[1].get_x_coordinate()).set_data(Cell_Status.FREE);
-		board.get_cell(player_location[2].get_y_coordinate(), player_location[2].get_x_coordinate()).set_data(Cell_Status.FREE);
-		board.get_cell(player_location[3].get_y_coordinate(), player_location[3].get_x_coordinate()).set_data(Cell_Status.FREE);
+		int target = 0;
+		boolean row = true;
 		
 		switch(p){
 			// player 1 trying to reach row BOARD_SIZE -1
 			case PLAYER_1:
-				distances = board.dijkstra(player_location[0].get_y_coordinate(), player_location[0].get_x_coordinate());
-				min_dist = distances.get(board.get_cell(BOARD_SIZE-1, 0));
-				for(int i = 1; i < BOARD_SIZE; i++){
-					if(distances.get(board.get_cell(BOARD_SIZE-1, i)) < min_dist){
-						min_dist = distances.get(board.get_cell(BOARD_SIZE-1, i));
-					}
-				}
-				ret = min_dist;
+				row = true;
+				target = BOARD_SIZE - 1;
 				break;
 			// player 2 trying to reach column 0	
 			case PLAYER_2:
-				distances = board.dijkstra(player_location[1].get_y_coordinate(), player_location[1].get_x_coordinate());
-				min_dist = distances.get(board.get_cell(0, 0));
-				for(int i = 1; i < BOARD_SIZE; i++){
-					if(distances.get(board.get_cell(i, 0)) < min_dist){
-						min_dist = distances.get(board.get_cell(i, 0));
-					}
-				}
-				ret = min_dist;
+				row = false;
+				target = 0;
 				break;
 			// player 3 trying to reach row 0
 			case PLAYER_3:
-				distances = board.dijkstra(player_location[2].get_y_coordinate(), player_location[2].get_x_coordinate());
-				min_dist = distances.get(board.get_cell(0, 0));
-				for(int i = 1; i < BOARD_SIZE; i++){
-					if(distances.get(board.get_cell(0, i)) < min_dist){
-						min_dist = distances.get(board.get_cell(0, i));
-					}
-				}
-				ret = min_dist;
+				row = true;
+				target = 0;
 				break;
-				
 			// player 4 trying to reach column BOARD_SIZE - 1
 			case PLAYER_4:
-				distances = board.dijkstra(player_location[3].get_y_coordinate(), player_location[3].get_x_coordinate());
-				min_dist = distances.get(board.get_cell(0, BOARD_SIZE - 1));
-				for(int i = 1; i < BOARD_SIZE; i++){
-					if(distances.get(board.get_cell(i, BOARD_SIZE - 1)) < min_dist){
-						min_dist = distances.get(board.get_cell(i, BOARD_SIZE - 1));
-					}
-				}
-				ret = min_dist;
+				row = false;
+				target = BOARD_SIZE - 1;
 				break;
 		}
-		
-		//replace player pawns
-		board.get_cell(player_location[0].get_y_coordinate(), player_location[0].get_x_coordinate()).set_data(Cell_Status.P1);
-		board.get_cell(player_location[1].get_y_coordinate(), player_location[1].get_x_coordinate()).set_data(Cell_Status.P2);
-		board.get_cell(player_location[2].get_y_coordinate(), player_location[2].get_x_coordinate()).set_data(Cell_Status.P3);
-		board.get_cell(player_location[3].get_y_coordinate(), player_location[3].get_x_coordinate()).set_data(Cell_Status.P4);
-		return ret;
+		Path path = a_star( player_location[p.ordinal()], target, row );
+		// the f value for the goal node should be 100% accurate
+		return path.f;
 	}
 	
 	/**
