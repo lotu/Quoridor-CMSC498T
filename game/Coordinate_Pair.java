@@ -14,10 +14,18 @@ public class Coordinate_Pair {
 		this.x = s;
 	}
 	
+	public int row(){
+		return y;
+	}
+
 	public int get_y_coordinate(){
 		return y;
 	}
 	
+	public int col(){
+		return x;
+	}
+
 	public int get_x_coordinate(){
 		return x;
 	}
