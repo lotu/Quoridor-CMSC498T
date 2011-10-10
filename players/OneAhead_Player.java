@@ -40,10 +40,12 @@ public class OneAhead_Player implements Player {
 				good_moves.add(moves.get(i));
 			}
 		}
+		/*
 		for ( int i= 0 ; i < good_moves.size() ; i++) {
 			System.out.println( good_moves.get(i) );
 		}
 		System.out.println("=====================================" );
+		*/
 		return good_moves.get(rng.nextInt(good_moves.size()));
 	}
 

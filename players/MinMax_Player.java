@@ -63,9 +63,10 @@ public class MinMax_Player implements Player {
 			}
 		}
 		// Print moves
+		/*
 		for ( int i= 0 ; i < good_moves.size() ; i++) {
 			System.out.println( good_moves.get(i) );
-		}
+		}*/
 		System.out.println("Depth: " + depth );
 		System.out.println("Evaluated: " + evaluated + " " +
 			evaluated / ((System.currentTimeMillis() -start) / 1000.0 ) + "eval/sec" );
