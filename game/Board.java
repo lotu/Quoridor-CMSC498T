@@ -339,8 +339,8 @@ public class Board {
 	 * @param to_row
 	 * @return
 	 */
-	private boolean path_exists_to_row(int from_row, int from_col, int to_row){
-		return a_star( new Coordinate_Pair( from_row, from_col), to_row, true) != null;
+	private boolean path_exists_to_row(Player_ID player, int to_row){
+		return a_star( player_location[player.ordinal()], to_row, true) != null;
 	}
 
 	/**
@@ -351,8 +351,8 @@ public class Board {
 	 * @param to_col
 	 * @return
 	 */
-	private boolean path_exists_to_column(int from_row, int from_col, int to_col){
-		return a_star( new Coordinate_Pair( from_row, from_col), to_col, false) != null;
+	private boolean path_exists_to_column(Player_ID player, int to_col){
+		return a_star(player_location[player.ordinal()] , to_col, false) != null;
 	}
 
 
@@ -538,10 +538,10 @@ public class Board {
 		
 		//cannot place a wall that leaves a player with 0 paths to its goal
 		boolean ret = false;
-		if(path_exists_to_row(player_location[0].get_y_coordinate(), player_location[0].get_x_coordinate(), BOARD_SIZE-1) && 
-				path_exists_to_column(player_location[1].get_y_coordinate(), player_location[1].get_x_coordinate(), 0) &&
-				path_exists_to_row(player_location[2].get_y_coordinate(), player_location[2].get_x_coordinate(), 0) &&
-				path_exists_to_column(player_location[3].get_y_coordinate(), player_location[3].get_x_coordinate(), BOARD_SIZE-1)){
+		if(path_exists_to_row(Player_ID.PLAYER_1, BOARD_SIZE-1) &&
+				path_exists_to_column(Player_ID.PLAYER_2, 0) &&
+				path_exists_to_row(Player_ID.PLAYER_3, 0) &&
+				path_exists_to_column(Player_ID.PLAYER_4, BOARD_SIZE-1)){
 			ret = true; //all players still have AT LEAST one path with the new wall in place
 		}
 		
