@@ -338,26 +338,27 @@ public class Board {
 	// Assume this position is a valid one
 	public Coordinate_Pair[] one_moves_from( Coordinate_Pair p ) {
 
+		Cell<Cell_Status> n_pair; // pulling out neighbors.get call give 6.6% increase to evals/sec
 		Vector<Cell<Cell_Status>> neighbors = board.get_cell(p.row(), p.col()).get_neighbors();
 		Coordinate_Pair res[] = new Coordinate_Pair[neighbors.size()];
 		for( int i = 0 ; i < neighbors.size(); i++ ) {
-			// TODO: check double use of neighbors.get()
-			res[i] = new Coordinate_Pair( neighbors.get(i).get_row(), neighbors.get(i).get_col() );
+			n_pair = neighbors.get(i);
+			res[i] = new Coordinate_Pair( n_pair.get_row(), n_pair.get_col() );
 		}
 		return res;
 	}
 
 	public boolean is_valid_path( Path path ) {
 		Path p = path;
+		Cell<Cell_Status> n_pair; // pulling out neighbors.get call give theoritcal incresse in perfomacne
 		// While we aren't at the end of the path
 		while ( p.parent != null ) {
 			// path is blocked
-
 			Vector<Cell<Cell_Status>> neighbors = board.get_cell(p.point.row(), p.point.col()).get_neighbors();
 			boolean found_parent = false;
 			for( int i = 0 ; i < neighbors.size(); i++ ) {
-				// TODO: check double use of neighbors.get()
-				if( neighbors.get(i).get_row() == p.parent.point.row() && neighbors.get(i).get_col() == p.parent.point.col() )
+				n_pair = neighbors.get(i);
+				if( n_pair.get_row() == p.parent.point.row() && n_pair.get_col() == p.parent.point.col() )
 				{
 					found_parent = true;
 					break;
