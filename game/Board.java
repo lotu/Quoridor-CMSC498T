@@ -2,6 +2,7 @@ package game;
 import game.Move.MOVE_TYPE;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Stack;
 import java.util.Vector;
 import java.util.Comparator;
@@ -267,103 +268,6 @@ public class Board {
 		return vertical_wall_placement_locations;
 	}
 
-	/**
-	 * Does a path exist from the provided board location to the specified column.
-	 * 
-	 * @param from_row
-	 * @param from_col
-	 * @param to_col
-	 * @return
-	 */
-	private boolean path_exists_to_column(int from_row, int from_col, int to_col){
-		//remove pawns from the board temporaily so jumps can be ignored
-		remove_players();
-		
-		Stack<Coordinate_Pair> tovisit_stack = new Stack<Coordinate_Pair>();
-		HashMap<Coordinate_Pair, Boolean> visited_map = new HashMap<Coordinate_Pair, Boolean>();
-		tovisit_stack.push(new Coordinate_Pair(from_row, from_col));
-
-		while(!tovisit_stack.isEmpty()){
-			Coordinate_Pair next = tovisit_stack.pop();
-			
-			//is this in the target column?
-			if(next.get_x_coordinate() == to_col){
-				//replace pawns
-				replace_players();
-				return true;
-			}
-			
-			//set the coordinates as having been visited to prevent cycles
-			visited_map.put(next, true);
-			
-			//up
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate())){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate());
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-				
-			//down
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate())){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate());
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-			
-			//left
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate(), next.get_x_coordinate()-1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate(), next.get_x_coordinate()-1);
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-			
-			//right
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate(), next.get_x_coordinate()+1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate(), next.get_x_coordinate()+1);
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-			
-			//check for jumpable players - i.e., check the four diagonal moves
-			//up-left
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate()-1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate()-1);
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-			//up-right
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate()+1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate()+1);
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-			//down-right
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate()+1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate()+1);
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-			//down-left
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate()-1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate()-1);
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-		}
-		
-		//replace player pawns
-		replace_players();
-		return false;
-	}
-
 	private void remove_players() {
 		board.get_cell(p1_location.get_y_coordinate(), p1_location.get_x_coordinate()).set_data(Cell_Status.FREE);
 		board.get_cell(p2_location.get_y_coordinate(), p2_location.get_x_coordinate()).set_data(Cell_Status.FREE);
@@ -378,29 +282,54 @@ public class Board {
 		board.get_cell(p4_location.get_y_coordinate(), p4_location.get_x_coordinate()).set_data(Cell_Status.P4);
 	}
 
-	private class ToEndHeurstic implements Comparator<Coordinate_Pair> {
-		
-		private boolean horiz;
-		private boolean postive;
+// Copied from http://code.google.com/p/a-star/source/browse/trunk/java/AStar.java?r=8
+	private class Path implements Comparable{
+		// Path for A* search
 
-		public ToEndHeurstic(){
-			horiz = true;
-			postive = true;
+		public Coordinate_Pair point;
+		public int f;
+		public int g;
+		public Path parent;
+
+		public Path(){
+			parent = null;
+			point = null;
+			g = f = 0;
 		}
 
-		public int compare( Coordinate_Pair a, Coordinate_Pair b){ 
-			if (horiz ) {
-				if ( postive )
-					return a.get_x_coordinate() - b.get_x_coordinate();
-				else
-					return b.get_x_coordinate() - a.get_x_coordinate();
-			} else { 
-				if ( postive )
-					return a.get_y_coordinate() - b.get_y_coordinate();
-				else
-					return b.get_y_coordinate() - a.get_y_coordinate();
-			}
+		public Path(Coordinate_Pair p, int m_g, int m_f){
+			parent = null;
+			point = p;
+			g = m_g;
+			f = m_f;
 		}
+
+		// Abuse of copy constructor
+		public Path(Path p) {
+			this();
+			parent = p;
+			g = p.g;
+			f = p.f;
+		}
+
+		// return less than 0 if this object is smaller than o
+		// greater than 0 if this object is bigger
+		public int compareTo( Object o){ 
+			Path p = (Path) o;
+			return (int) (f - p.f);
+		}
+	}
+
+	// Get moves that involve just one step, (i.e. no jumps
+	// Assume this position is a valid one
+	public Coordinate_Pair[] one_moves_from( Coordinate_Pair p ) {
+
+		Vector<Cell<Cell_Status>> neighbors = board.get_cell(p.row(), p.col()).get_neighbors();
+		Coordinate_Pair res[] = new Coordinate_Pair[neighbors.size()];
+		for( int i = 0 ; i < neighbors.size(); i++ ) {
+			res[i] = new Coordinate_Pair( neighbors.get(i).get_row(), neighbors.get(i).get_col() );
+		}
+		return res;
 	}
 
 	/**
@@ -412,133 +341,76 @@ public class Board {
 	 * @return
 	 */
 	private boolean path_exists_to_row(int from_row, int from_col, int to_row){
+		return a_star( new Coordinate_Pair( from_row, from_col), to_row, true) != null;
+	}
+
+	/**
+	 * Does a path exist from the provided board location to the specified column.
+	 * 
+	 * @param from_row
+	 * @param from_col
+	 * @param to_col
+	 * @return
+	 */
+	private boolean path_exists_to_column(int from_row, int from_col, int to_col){
+		return a_star( new Coordinate_Pair( from_row, from_col), to_col, false) != null;
+	}
+
+
+	// target is the target row or column row is if it is a row or if it is a column
+	private Path a_star(Coordinate_Pair start, int target, boolean row){
 		// blatentlly copied form wikipedia a star
-		//remove pawns from the board temporaily so jumps can be ignored
-		remove_players();
-		Coordinate_Pair start = new Coordinate_Pair( from_row, from_col );
 
 		HashSet<Coordinate_Pair> closed = new HashSet<Coordinate_Pair>( ); // half the boardish
-		PriorityQueue<Coordinate_Pair> open = PriorityQueue<Coordinate_Pair>( 10, new ToEndHeurstic() );
-		HashMap<Coordinate_Pair,Coordinate_Pair> came_from = new HashMap<Coordinate_Pair,Coordinate_Pair>( ); // half the boardish
+		PriorityQueue<Path> open = new PriorityQueue<Path>( );
 
-		HashMap<Coordinate_Pair, int> g_score = new HashMap<Coordinate_Pair, int>();  // Cost to this node
-		HashMap<Coordinate_Pair, int> h_score = new HashMap<Coordinate_Pair, int>();  // Heurstic at this node
-		HashMap<Coordinate_Pair, int> f_score = new HashMap<Coordinate_Pair, int>();  // g + h
+		int h_score = 0;
+		if ( row )
+			h_score = Math.abs ( start.row() - target );
+		else
+			h_score = Math.abs ( start.col() - target );
+		// h_score = f_score for first root
+		Path root = new Path( start, 0 , h_score );
 
-		
+		open.add(root );
+
 		while(!open.isEmpty()){
-			Coordinate_Pair next = open.poll();
-			// if x is goal
-			if ( false )
-				return true;
+			// next = x
+			Path next = open.poll();
+			// if next is goal i.e. row/col match up
+			if ( row && next.point.row() - target == 0 || 
+				!row && next.point.col() - target == 0 ){
+				return next;
+			}
 
-			closed.add( next );
-			// Fox each child y
-			for( ) {
-				if ( closed.contains( y )
+			// check that the node hasn't already been expanded
+			if ( closed.contains( next.point ) ) {
+				continue;
+			}
+			// Add point to closed so we know not to look at it again
+			closed.add( next.point );
+			// For each child i
+			Coordinate_Pair[] child = one_moves_from( next.point );
+			for(int i = 0; i < child.length; i++  ) {
+				if ( closed.contains( child[i]) )
 					continue;
-				int tentative_g_score = g_score.get( x ) + 1;
-				boolean tentative_is_beter = false;
+				// each node is one away from parent
+				int g_score = next.g + 1;
 
-				if ( ! open.contains(y) ) {
-					open.add(y);
-					tentative_is_beter = true;
-				} else if ( tentative_g_score < g_score.get(y) {
-					tentative_is_beter = true;
-				}
+				// Cacluate heurstic
+				if ( row )
+					h_score = Math.abs ( child[i].row() - target );
+				else
+					h_score = Math.abs ( child[i].col() - target );
 
-				if ( tentative_is_beter ) {
-					came_from.put( y , x );
-					g_score.put( y , tentative_g_score );
-					h_score.put( y , // heuristic_cost_estimate to goal );
-					f_score.put( y , g_score.get( y ) + h_score.get( y ) );'
-				}
+				Path p = new Path ( child[i] , g_score , g_score + h_score );
+				p.parent = next ;
+				open.add ( p );  // the same node can go in more than once
 			}
 		}
-		return false;
+		return null;
 	} // end a star
 
-
-			}
-			
-			//is this in the target column?
-			if(next.get_y_coordinate() == to_row){
-				//replace player pawns
-				replace_players();
-				return true;
-			}
-			
-			//set the coordinates as having been visited to prevent cycles
-			visited_map.put(next, true);
-			
-			//up
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate())){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate());
-				if(visited_map.get(next_cell) == null){
-					tovisit_stack.push(next_cell);
-				}
-			}
-				
-			//down
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate())){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate());
-				if(visited_map.get(next_cell) == null){
-					tovisit_stack.push(next_cell);
-				}
-			}
-			
-			//left
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate(), next.get_x_coordinate()-1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate(), next.get_x_coordinate()-1);
-				if(visited_map.get(next_cell) == null){
-					tovisit_stack.push(next_cell);
-				}
-			}
-			
-			//right
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate(), next.get_x_coordinate()+1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate(), next.get_x_coordinate()+1);
-				if(visited_map.get(next_cell) == null){
-					tovisit_stack.push(next_cell);
-				}
-			}
-			
-			//check for jumpable players - i.e., check the four diagonal moves
-			//up-left
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate()-1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate()-1);
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-			//up-right
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()-1, next.get_x_coordinate()+1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()-1, next.get_x_coordinate()+1);
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-			//down-right
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate()+1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate()+1);
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-			//down-left
-			if(can_move_to(next.get_y_coordinate(), next.get_x_coordinate(), next.get_y_coordinate()+1, next.get_x_coordinate()-1)){
-				Coordinate_Pair next_cell = new Coordinate_Pair(next.get_y_coordinate()+1, next.get_x_coordinate()-1);
-				if(visited_map.get(next_cell) == null){ //prevent cycles
-					tovisit_stack.push(next_cell);
-				}
-			}
-		}
-		
-		//replace player pawns
-		replace_players();
-		
-		return false;
-	}
 	
 	/**
 	 * Computes the shortest path to the goal on the given board for player p
