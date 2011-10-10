@@ -23,10 +23,15 @@ public class Board {
 	private static final int INITIAL_WALLS = 5;
 	private RectangularGrid<Cell_Status> board;
 	private Coordinate_Pair[] player_location;
+	private Path[] cached_path;
 	private HashMap<Coordinate_Pair, Boolean> horizontal_wall_placement_locations;
 	private HashMap<Coordinate_Pair, Boolean> vertical_wall_placement_locations;
 	private int[] walls;
 	
+	// Cache
+	public int cache_hit;
+	public int cache_miss;
+
 	/**
 	 * Construct the initial Quoridor board and player locations.
 	 */
@@ -51,6 +56,11 @@ public class Board {
 		player_location[2] = new Coordinate_Pair(BOARD_SIZE-1, BOARD_SIZE/2);
 		board.get_cell(BOARD_SIZE/2, 0).set_data(Cell_Status.P4);
 		player_location[3] = new Coordinate_Pair(BOARD_SIZE/2, 0);
+
+		// Create cached_path
+		cached_path = new Path[4];
+		cache_hit = 0;
+		cache_miss = 0;
 		
 		horizontal_wall_placement_locations = new HashMap<Coordinate_Pair, Boolean>();
 		vertical_wall_placement_locations = new HashMap<Coordinate_Pair, Boolean>();
@@ -83,6 +93,11 @@ public class Board {
 		board.get_cell(b.player_location[3].get_y_coordinate(), b.player_location[3].get_x_coordinate()).set_data(Cell_Status.P4);
 		player_location[3] = new Coordinate_Pair(b.player_location[3].get_y_coordinate(), b.player_location[3].get_x_coordinate());
 	
+		// Create new empty cached path don't use the exsiting one.
+		cached_path = new Path[4];
+		cache_hit = 0;
+		cache_miss = 0;
+
 		horizontal_wall_placement_locations = new HashMap<Coordinate_Pair, Boolean>();
 		vertical_wall_placement_locations = new HashMap<Coordinate_Pair, Boolean>();
 		for(Coordinate_Pair key : b.horizontal_wall_placement_locations.keySet()){
@@ -326,10 +341,57 @@ public class Board {
 		Vector<Cell<Cell_Status>> neighbors = board.get_cell(p.row(), p.col()).get_neighbors();
 		Coordinate_Pair res[] = new Coordinate_Pair[neighbors.size()];
 		for( int i = 0 ; i < neighbors.size(); i++ ) {
+			// TODO: check double use of neighbors.get()
 			res[i] = new Coordinate_Pair( neighbors.get(i).get_row(), neighbors.get(i).get_col() );
 		}
 		return res;
 	}
+
+	public boolean is_valid_path( Path path ) {
+		Path p = path;
+		// While we aren't at the end of the path
+		while ( p.parent != null ) {
+			// path is blocked
+
+			Vector<Cell<Cell_Status>> neighbors = board.get_cell(p.point.row(), p.point.col()).get_neighbors();
+			boolean found_parent = false;
+			for( int i = 0 ; i < neighbors.size(); i++ ) {
+				// TODO: check double use of neighbors.get()
+				if( neighbors.get(i).get_row() == p.parent.point.row() && neighbors.get(i).get_col() == p.parent.point.col() )
+				{
+					found_parent = true;
+					break;
+				}
+			} // if we didn't find the parent we have failed the path is invalid
+			if ( ! found_parent ){
+				return false;
+			}
+			// go up path
+			p = p.parent;
+		}
+		// Got trough whole path
+		return true;
+	}
+
+	private boolean path_exists(Player_ID player, int target, boolean row){
+		// Check cached path first
+		if (cached_path[player.ordinal() ] != null ) {
+			if( is_valid_path( cached_path[player.ordinal() ] ) )
+				cache_hit ++;
+				return true;
+		}
+		cache_miss ++;
+
+		Path p = a_star( player_location[player.ordinal()], target, row);
+		if ( p != null ) { // good path
+			if (cached_path[player.ordinal() ] == null) { // only update if bad path;
+				cached_path[player.ordinal() ] = p;
+			}
+			return true;
+		} else 
+			return false;
+	}
+
 
 	/**
 	 * Does a path exist from the provided board location to the specified row.
@@ -340,7 +402,7 @@ public class Board {
 	 * @return
 	 */
 	private boolean path_exists_to_row(Player_ID player, int to_row){
-		return a_star( player_location[player.ordinal()], to_row, true) != null;
+		return path_exists( player, to_row, true );
 	}
 
 	/**
@@ -352,7 +414,7 @@ public class Board {
 	 * @return
 	 */
 	private boolean path_exists_to_column(Player_ID player, int to_col){
-		return a_star(player_location[player.ordinal()] , to_col, false) != null;
+		return path_exists( player, to_col, false );
 	}
 
 
@@ -714,6 +776,8 @@ public class Board {
 	 */
 	private boolean move(int from_row, int from_col, int to_row, int to_col, Player_ID player){
 		if(can_move_to(from_row, from_col, to_row, to_col)){
+			// invalidate the cached path for this player
+			cached_path[player.ordinal()] = null;
 			switch (player) {
 			case PLAYER_1:
 				player_location[0] = new Coordinate_Pair(to_row, to_col);

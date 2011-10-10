@@ -58,7 +58,7 @@ public class Quoridor {
 				// Print board and other usefull information
 				System.out.println(move_made);
 				System.out.println("Time: " + delta_t + "ms " + ( (delta_t > max_t) ? "OVERTIME": "" ) );
-				System.out.println(b);
+				System.out.println(b); // Print board
 				System.out.println("          Current   Walls  Distance");
 				System.out.println("          Location  Left    to Win");
 				for(int i = 0; i < players.size(); i++){
@@ -68,6 +68,7 @@ public class Quoridor {
 						b.get_wall_count(players_ids[i]) + "       " +
 						b.shortest_path(players_ids[i] ) );
 				}
+				System.out.println("Hit/Miss: " + b.cache_hit + "/" + b.cache_miss );
 				System.out.println("");
 			}
 			
