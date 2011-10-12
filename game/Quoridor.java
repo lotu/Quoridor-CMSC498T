@@ -22,13 +22,12 @@ public class Quoridor {
 		}
 		
 		while(current_turn < MAX_TURNS && !(b.is_game_over())){
-			// Handle odd situation where a player has no moves
 			if(b.get_possible_moves(players_ids[player_turn_idx]).size() == 0){
+				System.out.println("Player " + player_turn_idx + " skipped:\n" + b);
 				current_turn++;
 				player_turn_idx = (player_turn_idx + 1) % 4;
 				continue;
 			}
-
 			Move move_made = players.get(player_turn_idx).make_move(new Board(b));
 			if(!b.apply_move(move_made)){
 				System.err.println("Player " + player_turn_idx + " made an invalid move: " + move_made);
