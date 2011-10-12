@@ -52,6 +52,7 @@ public class ExampleGame {
 				players.add(new Random_Player());
 				players.add(new Random_Player());
 				players.add(new Random_Player());
+				break;
 			case 1: // easy mix
 				players.add(new Random_Player());
 				players.add(new Wall_Follow_Player());
