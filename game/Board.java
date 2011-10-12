@@ -610,6 +610,7 @@ public class Board {
 		
 		boolean is_wall_too_far_from_pawns = true;
 		if(distance_between_players_and_wall(row, col, place_horizontally) <= 1){
+			int dist = distance_between_players_and_wall(row, col, place_horizontally);
 			is_wall_too_far_from_pawns = false;
 		}
 		
@@ -668,10 +669,10 @@ public class Board {
 		int wall_end_row, wall_end_col;
 		if(is_horizontal){
 			wall_end_row = wall_row;
-			wall_end_col = wall_col+1;
+			wall_end_col = wall_col+2;
 		}
 		else{
-			wall_end_row = wall_row+1;
+			wall_end_row = wall_row+2;
 			wall_end_col = wall_col;
 		}
 		
@@ -681,14 +682,13 @@ public class Board {
 		Coordinate_Pair[] locations = new Coordinate_Pair[]{p1_location, p2_location, p3_location, p4_location};
 		for(int i= 0; i < locations.length; i++){
 			point_distances[0] = Math.abs(wall_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()) + Math.abs(wall_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate());
-			point_distances[1] = Math.abs(wall_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()) + Math.abs(wall_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1);
-			point_distances[2] = Math.abs(wall_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate() +1) + Math.abs(wall_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1);
-			point_distances[3] = Math.abs(wall_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()+1) + Math.abs(wall_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate());
-			
+			point_distances[1] = Math.abs(wall_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()) + Math.abs(wall_col - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1));
+			point_distances[2] = Math.abs(wall_row - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate() +1)) + Math.abs(wall_col - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1));
+			point_distances[3] = Math.abs(wall_row - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()+1)) + Math.abs(wall_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate());
 			point_distances[4] = Math.abs(wall_end_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()) + Math.abs(wall_end_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate());
-			point_distances[5] = Math.abs(wall_end_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()) + Math.abs(wall_end_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1);
-			point_distances[6] = Math.abs(wall_end_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate() +1) + Math.abs(wall_end_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1);
-			point_distances[7] = Math.abs(wall_end_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()+1) + Math.abs(wall_end_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate());
+			point_distances[5] = Math.abs(wall_end_row - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()) + Math.abs(wall_end_col - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1));
+			point_distances[6] = Math.abs(wall_end_row - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate() +1)) + Math.abs(wall_end_col - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate()+1));
+			point_distances[7] = Math.abs(wall_end_row - (((Coordinate_Pair<Integer, Integer>)locations[i]).get_y_coordinate()+1)) + Math.abs(wall_end_col - ((Coordinate_Pair<Integer, Integer>)locations[i]).get_x_coordinate());
 			
 			if(minimum_value(point_distances) < curr_min){
 				curr_min = minimum_value(point_distances);
@@ -711,30 +711,41 @@ public class Board {
 	 */
 	private int distance_between_walls(int wall1_row, int wall1_col, boolean wall1_is_horizontal,
 			int wall2_row, int wall2_col, boolean wall2_is_horizontal){
-		int wall1_end_row, wall1_end_col, wall2_end_row, wall2_end_col;
+		int wall1_end_row, wall1_end_col, wall2_end_row, wall2_end_col, wall1_mid_row, wall1_mid_col, wall2_mid_row, wall2_mid_col;
 		if(wall1_is_horizontal){
 			wall1_end_row = wall1_row;
-			wall1_end_col = wall1_col+1;
+			wall1_mid_row = wall1_row;
+			wall1_mid_col = wall1_col+1;
+			wall1_end_col = wall1_col+2;
 		}
 		else{
-			wall1_end_row = wall1_row+1;
+			wall1_mid_row = wall1_row+1;
+			wall1_end_row = wall1_row+2;
 			wall1_end_col = wall1_col;
+			wall1_mid_col = wall1_col;
 		}
 		if(wall2_is_horizontal){
 			wall2_end_row = wall2_row;
-			wall2_end_col = wall2_col+1;
+			wall2_mid_row = wall2_row;
+			wall2_mid_col = wall2_col+1;
+			wall2_end_col = wall2_col+2;
 		}
 		else{
-			wall2_end_row = wall2_row+1;
+			wall2_mid_row = wall2_row+1;
+			wall2_end_row = wall2_row+2;
+			wall2_mid_col = wall2_col;
 			wall2_end_col = wall2_col;
 		}
 	
-		int[] point_distances = new int[4];
+		int[] point_distances = new int[8];
 		point_distances[0] = Math.abs(wall1_row - wall2_row) + Math.abs(wall1_col - wall2_col);
 		point_distances[1] = Math.abs(wall1_row - wall2_end_row) + Math.abs(wall1_col - wall2_end_col);
 		point_distances[2] = Math.abs(wall1_end_row - wall2_row) + Math.abs(wall1_end_col - wall2_col);
 		point_distances[3] = Math.abs(wall1_end_row - wall2_end_row) + Math.abs(wall1_end_col - wall2_end_col);
-	
+		point_distances[4] = Math.abs(wall1_row - wall2_mid_row) + Math.abs(wall1_col - wall2_mid_col);
+		point_distances[5] = Math.abs(wall1_end_row - wall2_mid_row) + Math.abs(wall1_end_col - wall2_mid_col);
+		point_distances[6] = Math.abs(wall1_mid_row - wall2_row) + Math.abs(wall1_mid_col - wall2_col);
+		point_distances[7] = Math.abs(wall1_mid_row - wall2_end_row) + Math.abs(wall1_mid_col - wall2_end_col);
 		return minimum_value(point_distances);
 	}
 	
@@ -1058,8 +1069,8 @@ public class Board {
 		
 		//wall-placing options
 		if(walls_available > 0){
-			for(int i = 0; i < BOARD_SIZE-1; i++){
-				for(int j = 0; j < BOARD_SIZE-1; j++){
+			for(int i = 0; i <= BOARD_SIZE-1; i++){
+				for(int j = 0; j <= BOARD_SIZE-1; j++){
 					if(can_place_wall(i, j, true)){
 						possible_moves.add(new Move(MOVE_TYPE.PLACE_WALL, player_id, new Coordinate_Pair<Integer, Integer>(i, j), true));
 					}
@@ -1217,21 +1228,28 @@ public class Board {
 | | | | | | | | | |
 -------------------
 		 */
-				
-		b.board.get_cell(b.p3_location.get_y_coordinate(), b.p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
-		b.p3_location = new Coordinate_Pair<Integer, Integer>(3, 0);
-		b.board.get_cell(3, 0).set_data(Cell_Status.P3);
 		
-		b.board.get_cell(b.p4_location.get_y_coordinate(), b.p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
-		b.p4_location = new Coordinate_Pair<Integer, Integer>(3, 1);
-		b.board.get_cell(3, 1).set_data(Cell_Status.P4);
-		
-		b.place_wall(3, 0, true);
-		b.place_wall(3, 2, true);
-		System.out.println(b.can_move_to(3, 0, 3, 2));
-
-		b.place_wall(4, 0, true);
+		b.place_wall(8, 3, true);
 		System.out.println("After placing a walls: \n" + b);
+		
+		b.place_wall(7, 7, true);
+		System.out.println("After placing a walls: \n" + b);
+		
+		
+//		b.board.get_cell(b.p3_location.get_y_coordinate(), b.p3_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+//		b.p3_location = new Coordinate_Pair<Integer, Integer>(3, 0);
+//		b.board.get_cell(3, 0).set_data(Cell_Status.P3);
+//		
+//		b.board.get_cell(b.p4_location.get_y_coordinate(), b.p4_location.get_x_coordinate()).set_data(Cell_Status.FREE);
+//		b.p4_location = new Coordinate_Pair<Integer, Integer>(3, 1);
+//		b.board.get_cell(3, 1).set_data(Cell_Status.P4);
+//		
+//		b.place_wall(3, 0, true);
+//		b.place_wall(3, 2, true);
+//		System.out.println(b.can_move_to(3, 0, 3, 2));
+//
+//		b.place_wall(4, 0, true);
+//		System.out.println("After placing a walls: \n" + b);
 		
 //		b.place_wall(7, 3, true);
 //		System.out.println("After placing a horizontal wall: \n" + b);

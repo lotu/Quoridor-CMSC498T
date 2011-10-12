@@ -26,13 +26,15 @@ public class Quoridor {
 		while(current_turn < MAX_TURNS && !(b.is_game_over())){
 			if ( print ) {
 				// Print turn info here so debugging in player is printed after
-				System.out.println("Ply " + (current_turn +1 )+ ": Turn " +  (current_turn / 4 + 1) +":" );
-				System.out.println("Player " + (player_turn_idx +1 )+ " move:");
+				System.out.println("Ply " + (current_turn + 1)+ ": Turn " +  (current_turn / 4 + 1) +":" );
+				System.out.println("Player " + (player_turn_idx + 1)+ " move:");
 			}
 			long start_t = System.currentTimeMillis();
 
 			// Handle odd situation where a player has no moves
 			if(b.get_possible_moves(players_ids[player_turn_idx]).size() == 0){
+				if ( print )
+					System.out.println("Player " + (player_turn_idx + 1) + " skipped:\n" + b);
 				current_turn++;
 				player_turn_idx = (player_turn_idx + 1) % 4;
 				continue;
