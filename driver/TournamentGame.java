@@ -22,6 +22,7 @@ public class TournamentGame {
 		// use a small seed by default
 		long seed = System.currentTimeMillis() % 10000;
 		int game_type = 1; // easy mix
+		int games = 8; // number of games
 		// parse arguments poorly
 		if (args.length > 0) {
 			try {
@@ -33,7 +34,15 @@ public class TournamentGame {
 		}
 		if (args.length > 1) {
 			try {
-				seed = Long.parseLong(args[1]);
+				games = Integer.parseInt(args[1]);
+			} catch (NumberFormatException e) {
+				System.err.println("Argument must be a integer");
+				System.exit(1);
+			}
+		}
+		if (args.length > 2) {
+			try {
+				seed = Long.parseLong(args[2]);
 			} catch (NumberFormatException e) {
 				System.err.println("Argument must be a integer");
 				System.exit(1);
@@ -88,7 +97,8 @@ public class TournamentGame {
 		int[] distance = {0,0,0,0};
 
 		// run games
-		for( int x = 0; x < 12; x++){
+		for( int x = 0; x < games; x++){
+			System.out.format( "Game %d out of %d\n", x, games);
 			players = new Vector<Player>();
 			for(int i = 0; i < 4; i++){
 				players.add( p_builder.get(i).getPlayer(rng ) );
