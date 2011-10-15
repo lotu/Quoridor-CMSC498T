@@ -147,6 +147,7 @@ class PlayerFactory {
 		try {
 			Player p = (Player) player_type.newInstance();
 			p.set_seed( rnd.nextLong() );
+			p.set_debug( false );
 			return p;
 		} catch ( Exception e ) {}
 		return null;

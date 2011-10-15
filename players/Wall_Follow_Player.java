@@ -97,6 +97,12 @@ public class Wall_Follow_Player implements Player {
 	}
 
 	/**
+	 * sets debuging
+	 */
+	public void set_debug(boolean debug){
+	}
+
+	/**
 	 * ignores move notifications
 	 */
 	public void notify_of_move(Player_ID playerThatMadeMove, Move moveMade,

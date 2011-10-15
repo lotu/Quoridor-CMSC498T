@@ -20,6 +20,7 @@ public class MinMax_Player implements Player {
 
 	// number of board evaluated
 	protected int evaluated = 0;
+	protected boolean debug = false;
 	/**
 	 * The player, whose turn it is next.
 	 */
@@ -30,6 +31,14 @@ public class MinMax_Player implements Player {
 	public MinMax_Player(){
 		rng = new Random();
 	}
+
+	/**
+	 * sets debuging
+	 */
+	public void set_debug(boolean debug_val){
+		debug = debug_val;
+	}
+
 
 	/**
 	 * returns a random move choice
@@ -62,15 +71,18 @@ public class MinMax_Player implements Player {
 				}
 			} catch (InterruptedException e ) { }
 		}
-		// Print moves
-		/*
-		for ( int i= 0 ; i < good_moves.size() ; i++) {
-			System.out.println( good_moves.get(i) );
-		}*/
-		System.out.println("Depth: " + depth );
-		//System.out.println("Evaluated: " + evaluated + " " +
-			//evaluated / ((System.currentTimeMillis() -start) / 1000.0 ) + "eval/sec" );
-		System.out.println("=====================================" );
+		
+		if ( debug ){
+			// Print moves
+			/*
+			for ( int i= 0 ; i < good_moves.size() ; i++) {
+				System.out.println( good_moves.get(i) );
+			}*/
+			System.out.println("Depth: " + depth );
+			//System.out.println("Evaluated: " + evaluated + " " +
+				//evaluated / ((System.currentTimeMillis() -start) / 1000.0 ) + "eval/sec" );
+			System.out.println("=====================================" );
+		}
 		return good_moves.get(rng.nextInt(good_moves.size()));
 	}
 

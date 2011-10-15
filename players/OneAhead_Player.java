@@ -13,6 +13,7 @@ public class OneAhead_Player implements Player {
 	private Random rng;
 	private Player_ID self_id;
 	private static Player_ID[] players_ids = new Player_ID[]{Player_ID.PLAYER_1, Player_ID.PLAYER_2, Player_ID.PLAYER_3, Player_ID.PLAYER_4};
+	private boolean debug;
 	
 	int LOSS = -10000;
 	int TIE =       0;
@@ -20,6 +21,14 @@ public class OneAhead_Player implements Player {
 
 	public OneAhead_Player(){
 		rng = new Random();
+		debug = false;
+	}
+
+	/**
+	 * sets debuging
+	 */
+	public void set_debug(boolean debug_val){
+		debug = debug_val;
 	}
 
 	/**
@@ -40,12 +49,13 @@ public class OneAhead_Player implements Player {
 				good_moves.add(moves.get(i));
 			}
 		}
-		/*
-		for ( int i= 0 ; i < good_moves.size() ; i++) {
-			System.out.println( good_moves.get(i) );
+		
+		if( debug ) {
+			for ( int i= 0 ; i < good_moves.size() ; i++) {
+				System.out.println( good_moves.get(i) );
+			}
+			System.out.println("=====================================" );
 		}
-		System.out.println("=====================================" );
-		*/
 		return good_moves.get(rng.nextInt(good_moves.size()));
 	}
 

@@ -46,4 +46,11 @@ public class Random_Player implements Player {
 	public void set_seed(long seed){
 		rng.setSeed(seed);
 	}
+
+	/**
+	 * sets debuging
+	 */
+	public void set_debug(boolean debug){
+	}
+
 }

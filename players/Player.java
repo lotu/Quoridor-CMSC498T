@@ -37,4 +37,11 @@ public interface Player {
 	 */
 	public void set_seed(long seed);
 
+	/**
+	 * Wheather or not print debuging. True means print debug
+	 * 
+	 * @param debug
+	 */
+	public void set_debug(boolean debug);
+
 }
