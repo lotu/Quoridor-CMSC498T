@@ -14,7 +14,7 @@ public class Quoridor {
 	private static long max_t = 2000;
 	private static Player_ID[] players_ids = new Player_ID[]{Player_ID.PLAYER_1, Player_ID.PLAYER_2, Player_ID.PLAYER_3, Player_ID.PLAYER_4};
 	
-	public static Player_ID run_game(Vector<Player> players, Boolean print){
+	public static Board run_game(Vector<Player> players, Boolean print){
 		int current_turn = 0;
 		Board b = new Board();
 		int player_turn_idx = 0;
@@ -78,6 +78,6 @@ public class Quoridor {
 			player_turn_idx = (player_turn_idx + 1) % 4;
 		}
 		
-		return b.compute_winner();
+		return b;
 	}
 }

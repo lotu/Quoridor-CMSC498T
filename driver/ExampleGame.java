@@ -1,5 +1,6 @@
 package driver;
 
+import game.Board;
 import game.Quoridor;
 
 import java.util.Vector;
@@ -43,39 +44,40 @@ public class ExampleGame {
 		System.out.println ("Using seed: " + seed );
 
 		Vector<Player> players = new Vector<Player>();
+		Vector<String> names = new Vector<String>();
 		Random rng = new Random( seed );
 		
 		// Add 4 players
 		switch( game_type ) {
 			case 0:	// random
-				players.add(new Random_Player());
-				players.add(new Random_Player());
-				players.add(new Random_Player());
-				players.add(new Random_Player());
+				players.add(new Random_Player());      names.add("Random");
+				players.add(new Random_Player());      names.add("Random");
+				players.add(new Random_Player());      names.add("Random");
+				players.add(new Random_Player());      names.add("Random");
 				break;
 			case 1: // easy mix
-				players.add(new Random_Player());
-				players.add(new Wall_Follow_Player());
-				players.add(new OneAhead_Player());
-				players.add(new Wall_Follow_Player());
+				players.add(new Random_Player());      names.add("Random");
+				players.add(new Wall_Follow_Player()); names.add("Wall Follower");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				players.add(new Wall_Follow_Player()); names.add("Wall Follower");
 				break;
 			case 2: // one Ahead (quick)
-				players.add(new OneAhead_Player());
-				players.add(new OneAhead_Player());
-				players.add(new OneAhead_Player());
-				players.add(new OneAhead_Player());
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
 				break;
 			case 3: // good mix (slow)
-				players.add(new MinMax_Player());
-				players.add(new OneAhead_Player());
-				players.add(new MinMax_Player());
-				players.add(new OneAhead_Player());
+				players.add(new MinMax_Player());      names.add("MinMax");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				players.add(new MinMax_Player());      names.add("MinMax");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
 				break;
 			case 4: // minMax (slow)
-				players.add(new MinMax_Player());
-				players.add(new MinMax_Player());
-				players.add(new MinMax_Player());
-				players.add(new MinMax_Player());
+				players.add(new MinMax_Player());      names.add("MinMax");
+				players.add(new MinMax_Player());      names.add("MinMax");
+				players.add(new MinMax_Player());      names.add("MinMax");
+				players.add(new MinMax_Player());      names.add("MinMax");
 				break;
 		}
 
@@ -83,13 +85,27 @@ public class ExampleGame {
 			players.get(i).set_seed( rng.nextLong() );
 		}
 		
-		Player_ID winner = Quoridor.run_game(players, Boolean.TRUE);
-		
+		Player_ID[] players_ids = new Player_ID[]{Player_ID.PLAYER_1, Player_ID.PLAYER_2, Player_ID.PLAYER_3, Player_ID.PLAYER_4};
+
+		Board b = Quoridor.run_game(players, Boolean.TRUE);
+		Player_ID winner = b.compute_winner();
+
+		System.out.println("               Current   Walls  Distance");
+		System.out.println("               Location  Left    to Win");
+		for(int i = 0; i < players.size(); i++){
+			System.out.format("%13s:  (%d,%d) %6d %7d\n", names.get(i),
+				b.get_player_location(players_ids[i]).get_x_coordinate(),
+				b.get_player_location(players_ids[i]).get_y_coordinate(),
+				b.get_wall_count(players_ids[i]),
+				b.shortest_path(players_ids[i]) );
+		}
+		System.out.println("");
+
 		if(winner == null){
 			System.out.println("Tie game.");
 		}
 		else{
-			System.out.format("%s wins.\n", winner);
+			System.out.format("Player %d (%s) wins.\n", winner.ordinal() + 1, names.get(winner.ordinal()));
 		}
 		System.out.println ("Game type: " + game_type );
 		System.out.println ("Seed: " + seed );
