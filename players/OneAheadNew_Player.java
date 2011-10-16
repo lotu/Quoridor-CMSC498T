@@ -126,6 +126,7 @@ public class OneAheadNew_Player implements Player {
 
 		// add advatage for next to move
 		//
+		/*
 		int my_id = this.self_id.ordinal();
 		double extra = .75; // extra for next move
 		double extra_delta = .25;  // how much to change extra
@@ -133,11 +134,14 @@ public class OneAheadNew_Player implements Player {
 			shortp[i] += extra;
 			extra -= extra_delta;
 		}
+		*/
 
+		/*
 		if (debug ) {
 			System.out.format("   [%.2f,%.2f,%.2f,%.2f]\n",
 				shortp[0], shortp[1], shortp[2], shortp[3]);
 		}
+		*/
 		// eval is mine - next best player
 		/*
 		double[] eval = { WIN, WIN, WIN, WIN };
@@ -157,18 +161,41 @@ public class OneAheadNew_Player implements Player {
 					place[i] += .25;
 			}
 		}
-		// eval is mine - next best player
+		// eval is mine vs best other player
 		
-		double[] vbest = { WIN, WIN, WIN, WIN };
+		double[] vs_best = { WIN, WIN, WIN, WIN };
 		for ( int i = 0; i < 4; i++){
 			for (int j = 0 ;j < 4; j++) {
-				if( i != j && shortp[i] - shortp[j] < vbest[i] )
-					vbest[i] = shortp[i] - shortp[j];
+				if( i != j && shortp[i] - shortp[j] < vs_best[i] )
+					vs_best[i] = shortp[i] - shortp[j];
 			}
 		}
+
+		double[] in_first = { 1, 1, 1, 1};
+		for ( int i = 0; i < 4; i++){
+			for (int j = 0 ;j < 4; j++) {
+				if( i != j && shortp[i] < shortp[j] ) // if someone is beating me
+				{
+					in_first[i] =  0;
+					break;
+				}
+			}
+		}
+		
+		// eval is mine vs best other player
+		
+		double[] o_best = { LOSS, LOSS, LOSS, LOSS };
+		for ( int i = 0; i < 4; i++){
+			for (int j = 0 ;j < 4; j++) {
+				if( i != j && shortp[j] > o_best[i] )
+					o_best[i] = shortp[j];
+			}
+		}
+
 		double[] eval = { 0,0,0,0};
 		for ( int i = 0; i < 4; i++){
-			eval[i] = place[i] * 100 + vbest[i] ;
+			//eval[i] = in_first[i] * 100 - o_best[i] ;
+			eval[i] = vs_best[i] + b.get_wall_count( players_ids[i] ) * -.40;
 		}
 		return eval;
 	}
