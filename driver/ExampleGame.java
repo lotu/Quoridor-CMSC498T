@@ -107,6 +107,10 @@ public class ExampleGame {
 		
 		Player_ID[] players_ids = new Player_ID[]{Player_ID.PLAYER_1, Player_ID.PLAYER_2, Player_ID.PLAYER_3, Player_ID.PLAYER_4};
 
+		System.out.println("Players:");
+		for(int i = 0; i < players.size(); i++)
+			System.out.format("%13s\n", names.get(i) );
+
 		Board b = Quoridor.run_game(players, Boolean.TRUE);
 		Player_ID winner = b.compute_winner();
 

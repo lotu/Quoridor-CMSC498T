@@ -83,18 +83,30 @@ public class TournamentGame {
 				p_builder.add(new PlayerFactory(OneAheadNew_Player.class));    names.add("One New2");
 				break;
 			case 4: // one Ahead vs
-				p_builder.add(new PlayerFactory(OneAhead_Player.class));    names.add("One Ahead1");
 				p_builder.add(new PlayerFactory(OneAheadNew_Player.class));    names.add("One New1");
+				p_builder.add(new PlayerFactory(OneAhead_Player.class));    names.add("One Ahead1");
 				p_builder.add(new PlayerFactory(OneAheadNew_Player.class));    names.add("One New2");
 				p_builder.add(new PlayerFactory(OneAheadNew_Player.class));    names.add("One New3");
 				break;
-			case 13: // good mix (slow)
-				p_builder.add(new PlayerFactory(MinMax_Player.class));      names.add("MinMax");
-				p_builder.add(new PlayerFactory(OneAhead_Player.class));    names.add("One Ahead");
-				p_builder.add(new PlayerFactory(MinMax_Player.class));      names.add("MinMax");
-				p_builder.add(new PlayerFactory(OneAhead_Player.class));    names.add("One Ahead");
+			case 12: // one MinMax (1)
+				p_builder.add(new PlayerFactory(OneAhead_Player.class));    names.add("One Ahead1");
+				p_builder.add(new PlayerFactory(OneAhead_Player.class));    names.add("One Ahead2");
+				p_builder.add(new PlayerFactory(OneAhead_Player.class));    names.add("One Ahead3");
+				p_builder.add(new PlayerFactory(MinMax_Player.class));    names.add("MinMax");
 				break;
-			case 14: // minMax (slow)
+			case 13: // one Ahead vs
+				p_builder.add(new PlayerFactory(MinMax_Player.class));    names.add("MinMax1");
+				p_builder.add(new PlayerFactory(OneAhead_Player.class));    names.add("One Ahead1");
+				p_builder.add(new PlayerFactory(OneAhead_Player.class));    names.add("One Ahead2");
+				p_builder.add(new PlayerFactory(MinMax_Player.class));    names.add("MinMax2");
+				break;
+			case 14: // one Ahead vs
+				p_builder.add(new PlayerFactory(OneAhead_Player.class));    names.add("One Ahead1");
+				p_builder.add(new PlayerFactory(MinMax_Player.class));    names.add("MinMax1");
+				p_builder.add(new PlayerFactory(MinMax_Player.class));    names.add("MinMax2");
+				p_builder.add(new PlayerFactory(MinMax_Player.class));    names.add("MinMax3");
+				break;
+			case 15: // minMax (slow)
 				for ( int i = 0; i < 4; i++){
 					p_builder.add(new PlayerFactory(MinMax_Player.class) );
 					names.add("MinMax");
@@ -148,7 +160,8 @@ public class TournamentGame {
 		// run games
 		for( int x = 0; x < games; x++){
 			int [] order = orders[ x % orders.length ] ;
-			System.out.format( "Game %d out of %d\n", x, games);
+			//System.out.format( "Game %d out of %d\n", x, games);
+			System.out.format( ".");
 			players = new Vector<Player>();
 			for(int i = 0; i < 4; i++){
 				players.add( p_builder.get(order[i]).getPlayer(rng ) );
@@ -171,14 +184,14 @@ public class TournamentGame {
 			}
 
 			if(winner == null){
-				System.out.println("Tie game.");
+				//System.out.println("Tie game.");
 			}
 			else{
 				scores[order[winner.ordinal()]] += 1;
-				System.out.format("Player %d (%s) wins.\n", 
-						winner.ordinal() + 1, names.get(winner.ordinal()));
+				//System.out.format("Player %d (%s) wins.\n", 
+						//winner.ordinal() + 1, names.get(winner.ordinal()));
 			}
-			System.out.println("");
+			//System.out.println("");
 		}
 
 		System.out.println("");
