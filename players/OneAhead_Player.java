@@ -111,7 +111,7 @@ public class OneAhead_Player implements Player {
 			shortp[i]= - b.shortest_path(players_ids[i]);
 		}
 
-		// eval is mine - next best player
+		// eval is mine - best other player
 		int[] eval = { WIN, WIN, WIN, WIN };
 		for ( int i = 0; i < 4; i++){
 			for (int j = 0 ;j < 4; j++) {
