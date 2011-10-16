@@ -11,6 +11,7 @@ import players.Player_ID;
 import players.Random_Player;
 import players.MinMax_Player;
 import players.OneAhead_Player;
+import players.OneAheadNew_Player;
 import players.AlphaBeta_Player;
 import players.Wall_Follow_Player;
 
@@ -61,19 +62,37 @@ public class ExampleGame {
 				players.add(new OneAhead_Player());    names.add("One Ahead");
 				players.add(new Wall_Follow_Player()); names.add("Wall Follower");
 				break;
-			case 2: // one Ahead (quick)
+			case 2: // one Ahead Mix ( same vs )
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				players.add(new OneAheadNew_Player());    names.add("One New");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				players.add(new OneAheadNew_Player());    names.add("One New");
+				break;
+			case 3: // one Ahead Mix (diff vs)
+				players.add(new OneAheadNew_Player());    names.add("One New");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				players.add(new OneAheadNew_Player());    names.add("One New");
+				break;
+			case 4: // one Ahead Orignal
 				players.add(new OneAhead_Player());    names.add("One Ahead");
 				players.add(new OneAhead_Player());    names.add("One Ahead");
 				players.add(new OneAhead_Player());    names.add("One Ahead");
 				players.add(new OneAhead_Player());    names.add("One Ahead");
 				break;
-			case 3: // good mix (slow)
+			case 5: // one Ahead New
+				players.add(new OneAheadNew_Player());    names.add("One New");
+				players.add(new OneAheadNew_Player());    names.add("One New");
+				players.add(new OneAheadNew_Player());    names.add("One New");
+				players.add(new OneAheadNew_Player());    names.add("One New");
+				break;
+			case 15: // good mix (slow)
 				players.add(new MinMax_Player());      names.add("MinMax");
 				players.add(new OneAhead_Player());    names.add("One Ahead");
 				players.add(new MinMax_Player());      names.add("MinMax");
 				players.add(new OneAhead_Player());    names.add("One Ahead");
 				break;
-			case 4: // minMax (slow)
+			case 16: // minMax (slow)
 				players.add(new MinMax_Player());      names.add("MinMax");
 				players.add(new MinMax_Player());      names.add("MinMax");
 				players.add(new MinMax_Player());      names.add("MinMax");
@@ -83,7 +102,7 @@ public class ExampleGame {
 
 		for(int i = 0; i < 4; i++){
 			players.get(i).set_seed( rng.nextLong() );
-			players.get(i).set_debug( true );
+			players.get(i).set_debug( false );
 		}
 		
 		Player_ID[] players_ids = new Player_ID[]{Player_ID.PLAYER_1, Player_ID.PLAYER_2, Player_ID.PLAYER_3, Player_ID.PLAYER_4};
