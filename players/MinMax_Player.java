@@ -61,7 +61,9 @@ public class MinMax_Player implements Player {
 				MinMaxThread _mx = new MinMaxThread(returned_moves, new Board(b), depth );
 				_mx.start();
 				synchronized (_mx) {
-					_mx.join(MAX_TIME - (System.currentTimeMillis() - start) );
+					long time_left = MAX_TIME - (System.currentTimeMillis() - start);
+					if ( time_left > 0) // unlikelly to be false but it throws an exception if it is
+						_mx.join( time_left );
 					// we are out of time
 					if ( _mx.isAlive() ) { 
 						_mx.interrupt();
