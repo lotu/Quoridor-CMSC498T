@@ -86,13 +86,25 @@ public class ExampleGame {
 				players.add(new OneAheadNew_Player());    names.add("One New");
 				players.add(new OneAheadNew_Player());    names.add("One New");
 				break;
-			case 15: // good mix (slow)
+			case 12: // good mix (slow)
+				players.add(new MinMax_Player());      names.add("MinMax");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				break;
+			case 13: // good mix (slow)
 				players.add(new MinMax_Player());      names.add("MinMax");
 				players.add(new OneAhead_Player());    names.add("One Ahead");
 				players.add(new MinMax_Player());      names.add("MinMax");
 				players.add(new OneAhead_Player());    names.add("One Ahead");
 				break;
-			case 16: // minMax (slow)
+			case 14: // good mix (slow)
+				players.add(new MinMax_Player());      names.add("MinMax");
+				players.add(new MinMax_Player());      names.add("MinMax");
+				players.add(new MinMax_Player());      names.add("MinMax");
+				players.add(new OneAhead_Player());    names.add("One Ahead");
+				break;
+			case 15: // minMax (slow)
 				players.add(new MinMax_Player());      names.add("MinMax");
 				players.add(new MinMax_Player());      names.add("MinMax");
 				players.add(new MinMax_Player());      names.add("MinMax");
