@@ -73,8 +73,16 @@ public class MinMax_Player implements Player {
 						depth -= 1; // didn't complete this level
 						break;
 					}
-					else
+					else {
+						if ( debug ) {
+							System.out.println("Depth " + depth + ": " + returned_moves.size() +  " moves" );
+						}
+						// there are no good moves left ( Probally means we loose no matter what )
+						if (returned_moves.size() == 0 ) {
+							break;
+						}
 						good_moves = (Vector)returned_moves.clone();
+					}
 				}
 			} catch (InterruptedException e ) { }
 		}
@@ -118,7 +126,8 @@ public class MinMax_Player implements Player {
 				
 			for ( int i=0 ; !isInterrupted() && i < moves.size(); i++) {
 				// eval
-				int[] eval = eval_move( b, moves.get(i), depth -1 );
+				int[] this_eval = eval_board( b );
+				int[] eval = eval_move( b, moves.get(i), depth -1, this_eval );
 				int myScore = eval[self_id.ordinal()];
 				if ( myScore > best) {
 					if ( debug ) {
@@ -143,28 +152,35 @@ public class MinMax_Player implements Player {
 		/**
 		 * new move
 		 */
-		public int[] eval_move(Board board, Move m, int depth) {
+		public int[] eval_move(Board board, Move m, int depth, int [] old_eval) {
 			// use this one so the orignal isn't modified
 			//System.out.println( m );
 			// Generate target node
+			int[] alpha = { LOSS -1 , LOSS -1, LOSS -1, LOSS -1 };
+			Player_ID me = m.getPlayer_making_move();
 			Board b = new Board( board );
 			b.apply_move( m );
-			// Should check for game over here
+			int [] this_eval = eval_board(b);
+			// If I haven't made things better that was a stupid move
+			// checks for game over here
+			if ( this_eval[me.ordinal()] <= old_eval[me.ordinal()] ) {
+				// don't go down this way it is dumb
+				return alpha; // which is all LOSS
+			}
 
 			// Check for depth limit
 			if (depth == 0) {
-				return eval_board( b);
+				return this_eval;
 			} //else 
 
 			// Do minMax of kids
-			int[] alpha = { LOSS, LOSS, LOSS, LOSS };
 			// get moves by next player
 			Player_ID p = next_player(m.getPlayer_making_move() );
 			Vector<Move> moves = b.get_possible_moves( p );
 			// TODO: sort moves forward move first
 			// Move are done before walls in get_possiable_moves
 			for ( int i=0; i < moves.size(); i++ ) {
-				int[] eval = eval_move( b , moves.get(i), depth -1 );
+				int[] eval = eval_move( b , moves.get(i), depth -1 , this_eval);
 				// if player won we can prune
 				if ( eval[ p.ordinal()] == WIN ) {
 					return eval;
