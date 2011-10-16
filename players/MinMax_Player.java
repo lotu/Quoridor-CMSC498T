@@ -50,10 +50,13 @@ public class MinMax_Player implements Player {
 		Vector<Move> good_moves = (Vector)moves.clone();
 		// Increment to zero at start of loop
 		int depth = 0; // 0
+		int max_depth = 99;
 		int MAX_TIME = 1995; // in milliseconds
-		evaluated = 0;
+		evaluated = 0; // debuging number of nodes evaluated
+		if ( b.get_wall_count( self_id ) == 0 )
+			max_depth = 1;
 		// Iterative deepening
-		while ( System.currentTimeMillis() - start < MAX_TIME )
+		while ( System.currentTimeMillis() - start < MAX_TIME && depth < max_depth )
 		{
 			depth += 1; // 1
 			Vector<Move> returned_moves = new Vector<Move>();
@@ -159,9 +162,13 @@ public class MinMax_Player implements Player {
 			Player_ID p = next_player(m.getPlayer_making_move() );
 			Vector<Move> moves = b.get_possible_moves( p );
 			// TODO: sort moves forward move first
+			// Move are done before walls in get_possiable_moves
 			for ( int i=0; i < moves.size(); i++ ) {
 				int[] eval = eval_move( b , moves.get(i), depth -1 );
-				// TODO: if player won we can prune
+				// if player won we can prune
+				if ( eval[ p.ordinal()] == WIN ) {
+					return eval;
+				}
 				// Check if this move gives next player better pos
 				if ( alpha[p.ordinal()] < eval[p.ordinal()] ) {
 					alpha = eval;
