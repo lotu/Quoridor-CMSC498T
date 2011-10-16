@@ -83,6 +83,7 @@ public class ExampleGame {
 
 		for(int i = 0; i < 4; i++){
 			players.get(i).set_seed( rng.nextLong() );
+			players.get(i).set_debug( true );
 		}
 		
 		Player_ID[] players_ids = new Player_ID[]{Player_ID.PLAYER_1, Player_ID.PLAYER_2, Player_ID.PLAYER_3, Player_ID.PLAYER_4};

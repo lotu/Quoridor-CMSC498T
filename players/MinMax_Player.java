@@ -49,13 +49,13 @@ public class MinMax_Player implements Player {
 		Vector<Move> moves = b.get_possible_moves(self_id);
 		Vector<Move> good_moves = (Vector)moves.clone();
 		// Increment to zero at start of loop
-		int depth = -1;
+		int depth = 0; // 0
 		int MAX_TIME = 1995; // in milliseconds
 		evaluated = 0;
 		// Iterative deepening
 		while ( System.currentTimeMillis() - start < MAX_TIME )
 		{
-			depth += 1;
+			depth += 1; // 1
 			Vector<Move> returned_moves = new Vector<Move>();
 			try {
 				MinMaxThread _mx = new MinMaxThread(returned_moves, new Board(b), depth );
@@ -65,6 +65,8 @@ public class MinMax_Player implements Player {
 					// we are out of time
 					if ( _mx.isAlive() ) { 
 						_mx.interrupt();
+						depth -= 1; // didn't complete this level
+						break;
 					}
 					else
 						good_moves = (Vector)returned_moves.clone();
@@ -73,14 +75,14 @@ public class MinMax_Player implements Player {
 		}
 		
 		if ( debug ){
+			System.out.println("*************************************" );
 			// Print moves
-			/*
 			for ( int i= 0 ; i < good_moves.size() ; i++) {
 				System.out.println( good_moves.get(i) );
-			}*/
-			System.out.println("Depth: " + depth );
-			//System.out.println("Evaluated: " + evaluated + " " +
-				//evaluated / ((System.currentTimeMillis() -start) / 1000.0 ) + "eval/sec" );
+			}
+			System.out.println("Depth compleated: " + depth );
+			System.out.format("Evaluated: %d %.0f eval/sec\n",  evaluated , 
+				evaluated / ((System.currentTimeMillis() -start) / 1000.0 ) );
 			System.out.println("=====================================" );
 		}
 		return good_moves.get(rng.nextInt(good_moves.size()));
@@ -90,7 +92,7 @@ public class MinMax_Player implements Player {
 		Vector<Move> best_moves;
 		Board b;
 		int depth;
-		int evaluated;
+//		int evaluated;
 
 		public MinMaxThread( Vector<Move> ret, Board board, int d) {
 			this.best_moves = ret;
@@ -101,19 +103,34 @@ public class MinMax_Player implements Player {
 		
 		public void run() {
 			// new list of good moves
+			int best = LOSS;
 			best_moves.removeAllElements();
 			Vector<Move> moves = b.get_possible_moves(self_id);
-			int best = LOSS;
+			if ( debug )  {
+				System.out.format( "Depth: %d\n", depth );
+				System.out.format( "Total Moves: %d\n", moves.size() );
+			}
+				
 			for ( int i=0 ; !isInterrupted() && i < moves.size(); i++) {
 				// eval
-				int[] eval = eval_move( b, moves.get(i), depth);
+				int[] eval = eval_move( b, moves.get(i), depth -1 );
 				int myScore = eval[self_id.ordinal()];
 				if ( myScore > best) {
+					if ( debug ) {
+						System.out.format("Better [%d,%d,%d,%d], old: %d\n",
+								eval[0], eval[1], eval[2], eval[3], best);
+						System.out.println( moves.get( i ) );
+					}
 					best = myScore;
 					best_moves.removeAllElements();
 					best_moves.add(moves.get(i) );
 				} else if( myScore == best ) {
 					best_moves.add(moves.get(i));
+					if (debug ) {
+						System.out.format("[%d,%d,%d,%d] ",
+								eval[0], eval[1], eval[2], eval[3]);
+						System.out.println( moves.get( i ) );
+					}
 				}
 			}
 		}
@@ -139,11 +156,21 @@ public class MinMax_Player implements Player {
 			// get moves by next player
 			Player_ID p = next_player(m.getPlayer_making_move() );
 			Vector<Move> moves = b.get_possible_moves( p );
+			// TODO: sort moves forward move first
 			for ( int i=0; i < moves.size(); i++ ) {
 				int[] eval = eval_move( b , moves.get(i), depth -1 );
+				// TODO: if player won we can prune
 				// Check if this move gives next player better pos
-				if ( alpha[p.ordinal()] < eval[p.ordinal()] )
+				if ( alpha[p.ordinal()] < eval[p.ordinal()] ) {
 					alpha = eval;
+					if ( debug ) {
+						for ( int j = 0 ; j < this.depth - depth ; j ++ )
+							System.out.print(" ");
+						System.out.format("[%d,%d,%d,%d] ",
+									eval[0], eval[1], eval[2], eval[3]);
+						System.out.println( moves.get( i ) );
+					}
+				}
 			}
 			return alpha;
 		}
