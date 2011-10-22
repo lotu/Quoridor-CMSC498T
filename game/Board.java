@@ -652,14 +652,23 @@ public class Board {
 		Integer curr_min = Integer.MAX_VALUE; 
 		Coordinate_Pair[] locations = new Coordinate_Pair[]{player_location[0], player_location[1], player_location[2], player_location[3]};
 		for(int i= 0; i < locations.length; i++){
-			point_distances[0] = Math.abs(wall_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) + Math.abs(wall_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
-			point_distances[1] = Math.abs(wall_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) + Math.abs(wall_col - ((Coordinate_Pair)locations[i]).get_x_coordinate()+1);
-			point_distances[2] = Math.abs(wall_row - ((Coordinate_Pair)locations[i]).get_y_coordinate() +1) + Math.abs(wall_col - ((Coordinate_Pair)locations[i]).get_x_coordinate()+1);
-			point_distances[3] = Math.abs(wall_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()+1) + Math.abs(wall_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
-			point_distances[4] = Math.abs(wall_end_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) + Math.abs(wall_end_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
-			point_distances[5] = Math.abs(wall_end_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) + Math.abs(wall_end_col - ((Coordinate_Pair)locations[i]).get_x_coordinate()+1);
-			point_distances[6] = Math.abs(wall_end_row - ((Coordinate_Pair)locations[i]).get_y_coordinate() +1) + Math.abs(wall_end_col - ((Coordinate_Pair)locations[i]).get_x_coordinate()+1);
-			point_distances[7] = Math.abs(wall_end_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()+1) + Math.abs(wall_end_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
+			point_distances[0] = Math.abs(wall_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) +
+									Math.abs(wall_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
+			point_distances[1] = Math.abs(wall_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) +
+									Math.abs(wall_col - (((Coordinate_Pair)locations[i]).get_x_coordinate()+1));
+			point_distances[2] = Math.abs(wall_row - (((Coordinate_Pair)locations[i]).get_y_coordinate() +1)) +
+									Math.abs(wall_col - (((Coordinate_Pair)locations[i]).get_x_coordinate()+1));
+			point_distances[3] = Math.abs(wall_row - (((Coordinate_Pair)locations[i]).get_y_coordinate()+1)) +
+									Math.abs(wall_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
+
+			point_distances[4] = Math.abs(wall_end_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) + 
+									Math.abs(wall_end_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
+			point_distances[5] = Math.abs(wall_end_row - ((Coordinate_Pair)locations[i]).get_y_coordinate()) + 
+									Math.abs(wall_end_col - (((Coordinate_Pair)locations[i]).get_x_coordinate()+1));
+			point_distances[6] = Math.abs(wall_end_row - (((Coordinate_Pair)locations[i]).get_y_coordinate() +1)) +
+									Math.abs(wall_end_col - (((Coordinate_Pair)locations[i]).get_x_coordinate()+1));
+			point_distances[7] = Math.abs(wall_end_row - (((Coordinate_Pair)locations[i]).get_y_coordinate()+1)) +
+									Math.abs(wall_end_col - ((Coordinate_Pair)locations[i]).get_x_coordinate());
 			
 			if(minimum_value(point_distances) < curr_min){
 				curr_min = minimum_value(point_distances);
