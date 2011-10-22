@@ -25,13 +25,15 @@ import java.util.PriorityQueue;
 
 
 /**
- * A player that uses MinMax really max n for the game of Quoridor.
+ * A player that uses Max N for the game of Quoridor.  Prunes aggressivelly "bad" moves 
+ and uses iterative deepening to stay under time
  */
 public class P1_Bullen implements Player {
 	protected Random rng;
 	protected Player_ID self_id;
 	protected static Player_ID[] players_ids = new Player_ID[]{Player_ID.PLAYER_1, Player_ID.PLAYER_2, Player_ID.PLAYER_3, Player_ID.PLAYER_4};
 	
+	// Large constants for Win and loss
 	public int LOSS = -10000;
 	public int TIE =       0;
 	public int WIN =   10000;
@@ -59,12 +61,12 @@ public class P1_Bullen implements Player {
 
 
 	/**
-	 * returns a random move choice
+	 * returns a move choice
 	 */
 	public Move make_move(Board orig_board) {
 		// When we started
 		long start = System.currentTimeMillis();
-		// Convert board
+		// Convert board to my faster board type
 		My_Board b = new My_Board( orig_board );
 
 		Vector<My_Move> moves = b.get_possible_moves(self_id);
@@ -72,8 +74,9 @@ public class P1_Bullen implements Player {
 		// Increment to zero at start of loop
 		int depth = 0; // 0
 		int max_depth = 99;
-		int MAX_TIME = 1995; // in milliseconds
+		int MAX_TIME = 1970; // in milliseconds I seam to go over sometime when the machine is under load
 		evaluated = 0; // debuging number of nodes evaluated
+		// if we are out of wall their is no point in going very deep
 		if ( b.get_wall_count( self_id ) == 0 )
 			max_depth = 1;
 		// Iterative deepening
@@ -123,6 +126,11 @@ public class P1_Bullen implements Player {
 		return  ret_move.to_OldMove();
 	}
 
+	/**
+	* Thread to run one level of iterative deepening.  It can be interupted on
+	* the top level, when the host is out of time.  This is really MaxN
+	* but minMax stuck.
+	*/
 	class MinMaxThread extends Thread {
 		Vector<My_Move> best_moves;
 		My_Board b;
@@ -172,12 +180,16 @@ public class P1_Bullen implements Player {
 		}
 
 		/**
-		 * new move
+		 * Expand board with move m, and return evaluation of node.
+		 * depth is the how much deeper we can go.
+	     * old_eval is the result of the eval function on the parent so we don't have to run it 
+		 * on each child.
 		 */
 		public int[] eval_move(My_Board board, My_Move m, int depth, int [] old_eval) {
 			// use this one so the orignal isn't modified
 			//System.out.println( m );
 			// Generate target node
+			// Initalize to worse than a LOSS
 			int[] alpha = { LOSS -1 , LOSS -1, LOSS -1, LOSS -1 };
 			Player_ID me = m.getPlayer_making_move();
 			My_Board b = new My_Board( board );
@@ -186,8 +198,8 @@ public class P1_Bullen implements Player {
 			// If I haven't made things better that was a stupid move
 			// checks for game over here
 			if ( this_eval[me.ordinal()] <= old_eval[me.ordinal()] ) {
-				// don't go down this way it is dumb
-				return alpha; // which is all LOSS
+				// don't go down this way it is dumb (or se we tell ourselves)
+				return alpha; // which is all LOSS - 1
 			}
 
 			// Check for depth limit
@@ -195,19 +207,20 @@ public class P1_Bullen implements Player {
 				return this_eval;
 			} //else 
 
-			// Do minMax of kids
+			// Do Max N of kids
 			// get moves by next player
 			Player_ID p = next_player(m.getPlayer_making_move() );
 			Vector<My_Move> moves = b.get_possible_moves( p );
 			// TODO: sort moves forward move first
 			// My_Move are done before walls in get_possiable_moves
+			// So it sorted enough with the pruning
 			for ( int i=0; i < moves.size(); i++ ) {
 				int[] eval = eval_move( b , moves.get(i), depth -1 , this_eval);
 				// if player won we can prune
 				if ( eval[ p.ordinal()] == WIN ) {
 					return eval;
 				}
-				// Check if this move gives next player better pos
+				// Check if this move gives next player better eval
 				if ( alpha[p.ordinal()] < eval[p.ordinal()] ) {
 					alpha = eval;
 					if ( debug ) {
@@ -222,6 +235,12 @@ public class P1_Bullen implements Player {
 			return alpha;
 		}
 
+		/**
+		 * Produce the evaluation of a board for each player.  If the 
+		 * game is over then use WIN/LOSS numbers, otherwise 
+		 * min ( shortest_path ( me ) - max( shortest_path( other_players ) ) )
+		 * it dosen't look like this in the code but it equivilent
+		 */
 		public int[] eval_board(My_Board b){
 
 			evaluated += 1;
@@ -238,16 +257,18 @@ public class P1_Bullen implements Player {
 				}
 			}
 
-			// other wise
+			// other wise we need to estimate the winner
 			int shortp[] = new int[4];
 
 			for ( int i = 0; i < 4; i++) {
 				// negate shortest path so shorter paths score higher
 				shortp[i]= - b.shortest_path(players_ids[i]);
-				// TODO: add number of walls left
+				// TODO: add number of walls left 
+				// adding number of walls was never shown to be a good idea
+				// could explore further though
 			}
 
-			// eval is mine - next best player
+			// eval is mine -  best other player
 			int[] eval = { WIN, WIN, WIN, WIN };
 			for ( int i = 0; i < 4; i++){
 				for (int j = 0 ;j < 4; j++) {
@@ -257,7 +278,7 @@ public class P1_Bullen implements Player {
 			}
 			return eval;
 		}
-	}
+	} // End of MinMaxThread Class
 
 
 	/**
@@ -281,7 +302,21 @@ public class P1_Bullen implements Player {
 	public void set_seed(long seed){
 		rng.setSeed(seed);
 	}
-}
+} // End of P1_Bullen class
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+////   _____         _              ____                      _ 
+////  |  ___|_ _ ___| |_ ___ _ __  | __ )  ___   __ _ _ __ __| |
+////  | |_ / _` / __| __/ _ \ '__| |  _ \ / _ \ / _` | '__/ _` |
+////  |  _| (_| \__ \ ||  __/ |    | |_) | (_) | (_| | | | (_| |
+////  |_|  \__,_|___/\__\___|_|    |____/ \___/ \__,_|_|  \__,_|
+//// 
+////
+//// Below is a modified version of the game driver.  It should run exactlly 
+//// the same as the code that was posted on the due date October 16th.
+//// It uses A* and cacheing to speed things up.  This improves the number of
+//// nodes evaluate per second from ~1,200 to ~25,000 
 
 /**
  * This class contains all of the state information for a game of Quoridor. The methods for manipulating
@@ -396,7 +431,8 @@ class My_Board {
 	}
 
 	/**
-	 * Copy constructor to make a deep copy
+	 * Copy constructor to make a deep copy.  Used to copy form the real board.  
+	 * Notes are in place to make it obvious you are edit this constructor
 	 * @param b
 	 */
 	public My_Board(Board b){
@@ -643,7 +679,7 @@ class My_Board {
 		board.get_cell(player_location[3].get_y_coordinate(), player_location[3].get_x_coordinate()).set_data(Cell_Status.P4);
 	}
 
-// Copied from http://code.google.com/p/a-star/source/browse/trunk/java/AStar.java?r=8
+// Copied a bit from http://code.google.com/p/a-star/source/browse/trunk/java/AStar.java?r=8
 	private class Path implements Comparable{
 		// Path for A* search
 
@@ -768,7 +804,10 @@ class My_Board {
 	}
 
 
-	// target is the target row or column row is if it is a row or if it is a column
+	/**
+	* Do and a star seach and return a path.  The starting point is start.
+	* target is the target row or column row is if it is a row or if it is a column
+	*/
 	private Path a_star(My_Coordinate_Pair start, int target, boolean row){
 		// blatentlly copied form wikipedia a star
 
@@ -1739,6 +1778,9 @@ class My_Move {
 		this.is_horizontal = is_horizontal;
 	}
 
+	/**
+	 * turn this move into a move that we can return from get_move function
+	 */
 	public Move to_OldMove() {
 		if (move_type == MOVE_TYPE.MOVE_PAWN) 
 			return new Move( Move.MOVE_TYPE.MOVE_PAWN, this.player_making_move, new Coordinate_Pair<Integer, Integer> (  target_cell_coordinates.row(),  target_cell_coordinates.col() ) );

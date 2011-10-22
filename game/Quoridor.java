@@ -28,12 +28,21 @@ public class Quoridor {
 				player_turn_idx = (player_turn_idx + 1) % 4;
 				continue;
 			}
+
+			long start_t = System.currentTimeMillis();
 			Move move_made = players.get(player_turn_idx).make_move(new Board(b));
+			long delta_t = System.currentTimeMillis() - start_t;
+
 			if(!b.apply_move(move_made)){
 				System.err.println("Player " + player_turn_idx + " made an invalid move: " + move_made);
 				System.exit(0);
 			}
-			
+
+			if( delta_t > 2000 ){
+				System.err.println("Player " + player_turn_idx + " is over time: " + delta_t );
+				System.exit(0);
+			}
+
 			for(int i = 0; i < players.size(); i++){
 				if(i != player_turn_idx){
 					players.get(i).notify_of_move(players_ids[player_turn_idx], move_made, new Board(b));
